@@ -1,133 +1,246 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="icon" href="images/main-app-logo.webp" type="image/x-icon">
+    <link rel="icon" href="images/ubt-logo.webp">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- ✅ Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* ===== Loader ===== */
+        /* LOADER */
         .loader {
             position: fixed;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,.8);
+            background: rgba(255, 255, 255, 0.8);
             z-index: 9999;
-            transition: opacity .5s ease-out;
+            transition: 0.5s;
         }
+
         .loader.hidden {
             opacity: 0;
             visibility: hidden;
         }
+
         .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3b82f6;
+            border-radius: 50%;
             width: 50px;
             height: 50px;
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        /* ===== Main ===== */
-        main.hidden { opacity: 0; }
+        main.hidden {
+            opacity: 0;
+        }
+
         main.visible {
             opacity: 1;
-            transition: opacity .5s ease-in;
+            transition: opacity 0.6s ease;
         }
 
-        .bg-overlay {
-            background: rgba(230,230,250,.45);
+        /* LEFT */
+        #left-content {
+            opacity: 0;
+            transform: translateX(-50px);
         }
 
-        .login-card {
-            background: rgba(0,0,0,.8);
-            border-radius: 0 1.5rem 0 1.5rem;
-            color: #fff;
+        .animate-left {
+            animation: slideLeft 0.8s ease forwards;
         }
 
-        .text-lavender { color: #e6e6fa; }
+        @keyframes slideLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* FLOAT */
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        /* CARD */
+        #login-card {
+            opacity: 0;
+            transform: translateY(-80px) scale(0.95);
+        }
+
+        .animate-drop {
+            animation: dropIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes dropIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-80px) scale(0.95);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(10px) scale(1.02);
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- Loader -->
+    <!-- LOADER -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
     </div>
 
-    <!-- Main -->
     <main id="main-content"
-          class="hidden min-vh-100 d-flex align-items-center justify-content-center position-relative px-2"
-          style="background:url('/images/wallpaper-ubt-ghibli.webp') center/cover no-repeat;">
+        class="hidden min-h-screen w-screen relative flex items-center justify-center overflow-hidden px-6 py-10">
 
-        <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay"></div>
+        <!-- BACKGROUND -->
+        <div class="absolute inset-0">
+            <img src="/images/wallpaper-ubt-ghibli.webp" class="w-full h-full object-cover brightness-70">
 
-        <div class="container position-relative">
-            <div class="row justify-content-center">
-                <div class="col-24 col-sm-8 col-xl-4">
-                    <div class="login-card text-center py-4 px-3">
+            <div class="absolute inset-0 bg-black/70"></div>
+        </div>
 
-                        <img src="images/ubt-logo.webp" width="150" height="150" class="mb-3">
+        <!-- CONTENT -->
+        <div
+            class="relative z-10 w-full max-w-6xl 
+            grid grid-cols-1 md:grid-cols-2 
+            gap-6 md:gap-10 items-center">
 
-                        <div class="fs-2 fw-semibold text-lavender mt-3">
-                            PRESENSI UBT
-                        </div>
+            <!-- LEFT -->
+            <div id="left-content" class="text-white text-center md:text-left">
 
-                        <div class="fs-6 fst-italic text-lavender mb-3">
-                            Aplikasi Pencatatan Presensi Universitas Bunda Thamrin Akademik UBT
-                        </div>
+                <img src="images/ubt-logo.webp"
+                    class="w-20 md:w-32 mx-auto md:mx-0 mb-4 md:mb-6 drop-shadow-xl animate-float" />
 
-                        @if (session('error'))
-                            <div class="alert bg-light text-danger fw-semibold">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 256 256">
-                                    <path fill="red"
-                                          d="M128 112a28 28 0 0 0-8 54.83V184a8 8 0 0 0 16 0v-17.17a28 28 0 0 0-8-54.83m0 40a12 12 0 1 1 12-12a12 12 0 0 1-12 12m80-72h-32V56a48 48 0 0 0-96 0v24H48a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16M96 56a32 32 0 0 1 64 0v24H96Zm112 152H48V96h160z"/>
-                                </svg>
-                                <div class="mt-2">{{ session('error') }}</div>
-                            </div>
-                        @else
-                            <a href="{{ \App\Http\Middleware\Sso::getLoginLink() }}"
-                               class="btn btn-primary btn-lg px-5 my-4 fw-semibold"
-                               style="transition:.3s">
-                                Login SSO UBT
-                            </a>
-                        @endif
+                <h1 class="text-3xl md:text-5xl font-bold leading-tight drop-shadow">
+                    ASRAMA UBT
+                </h1>
 
-                        <p class="text-lavender mt-3 mb-0">
-                            © IT PT. Thamrin Sinar Surya<br>
-                            Universitas Bunda Thamrin<br>
-                            2025
-                        </p>
+                <p class="mt-3 md:mt-4 text-sm md:text-lg text-blue-100 max-w-md mx-auto md:mx-0">
+                    Sistem Informasi Asrama Universitas Bunda Thamrin
+                    untuk pengelolaan data asrama Roemah54
+                    secara modern, cepat, dan terintegrasi.
+                </p>
 
-                    </div>
+                <div class="mt-4 md:mt-6 flex justify-center md:justify-start gap-2">
+                    <div class="h-1 w-10 md:w-12 bg-purple-500 rounded"></div>
+                    <div class="h-1 w-5 md:w-6 bg-blue-400 rounded"></div>
+                    <div class="h-1 w-3 md:w-4 bg-red-500 rounded"></div>
                 </div>
             </div>
+
+            <!-- RIGHT -->
+            <div id="login-card">
+                <div
+                    class="w-full max-w-md mx-auto 
+                    backdrop-blur-2xl bg-white/10 border border-white/20 
+                    rounded-2xl md:rounded-[2rem] 
+                    p-6 md:p-8 text-white 
+                    shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+
+                    <h2 class="text-xl md:text-2xl font-semibold text-center mb-2">
+                        Selamat Datang
+                    </h2>
+
+                    <p class="text-xs md:text-sm text-blue-100 text-center mb-5 md:mb-6">
+                        Silakan login menggunakan akun SSO UBT
+                    </p>
+
+                    @if (session('error'))
+                        <div
+                            class="mb-4 bg-red-500/20 border border-red-400 
+                            text-red-200 px-4 py-3 rounded-lg text-sm text-center">
+                            {{ session('error') }}
+                        </div>
+                    @else
+                        <a href="{{ \App\Http\Middleware\Sso::getLoginLink() }}"
+                            class="block text-center bg-gradient-to-r from-blue-600 to-blue-700 
+                            hover:scale-105 transition duration-300 
+                            rounded-xl px-5 py-2.5 md:px-6 md:py-3 
+                            text-base md:text-lg font-semibold shadow-lg">
+                            Login SSO UBT
+                        </a>
+                    @endif
+
+                    <!-- FOOTER -->
+                    <div class="pt-4 md:pt-5 border-t border-white/10 mt-5 md:mt-6">
+                        <p class="text-[10px] md:text-[11px] text-center leading-relaxed text-blue-100/70">
+                            ©{{ now()->year }}
+                            <span class="font-semibold text-yellow-400">ASRAMA</span><br>
+                            Designed & Developed by
+                            <span class="font-medium text-blue-100/90">
+                                Muhammad Riski Fauzi |
+                                <span class="font-semibold text-yellow-400">
+                                    Universitas Bunda Thamrin
+                                </span>
+                            </span>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </main>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
-                document.getElementById('main-content').classList.add('visible');
+                const loader = document.getElementById('loader');
+                const main = document.getElementById('main-content');
+                const left = document.getElementById('left-content');
+                const card = document.getElementById('login-card');
+
+                loader.classList.add('hidden');
+
+                main.classList.remove('hidden');
+                main.classList.add('visible');
+
+                setTimeout(() => {
+                    left.classList.add('animate-left');
+                }, 100);
+
+                setTimeout(() => {
+                    card.classList.add('animate-drop');
+                }, 400);
+
             }, 300);
         });
     </script>
 </body>
+
 </html>
