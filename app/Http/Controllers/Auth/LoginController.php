@@ -3,21 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Historislogin;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json([
                 'success' => false,
-                'status'  => 401,
+                'status' => 401,
                 'message' => 'Unauthorized',
             ], 401);
         }
@@ -25,16 +21,16 @@ class LoginController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         if (Auth::check()) {
-
             Auth::logout();
-            // request()->session()->invalidate();
-            // request()->session()->regenerateToken();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
 
-        $logoutLink = 'https://sidara.ubtsu.ac.id/sso/logout?redirect_uri=' . urlencode(url('/'));
-        // return redirect()->away($logoutLink);
+        $logoutLink = config('services.sidara.url').'/sso/logout?redirect_uri='.urlencode(url('/'));
+
+        return redirect()->away($logoutLink);
     }
 }
