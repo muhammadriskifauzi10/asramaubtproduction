@@ -40,14 +40,14 @@
                                     <td>{{ $tagihan->penyewa->nim }}</td>
                                 </tr>
                                 <tr>
-                                    <td>LANTAI</td>
-                                    <td width="20" class="text-right">:</td>
-                                    <td>{{ $tagihan->kamar->lantai->nama }}</td>
-                                </tr>
-                                <tr>
                                     <td>TIPE ASRAMA</td>
                                     <td width="20" class="text-right">:</td>
                                     <td>{{ $tagihan->kamar->type->nama ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>LANTAI</td>
+                                    <td width="20" class="text-right">:</td>
+                                    <td>{{ $tagihan->kamar->lantai->nama }}</td>
                                 </tr>
                                 <tr>
                                     <td>KAMAR</td>
