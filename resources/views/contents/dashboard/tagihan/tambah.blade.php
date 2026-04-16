@@ -20,8 +20,8 @@
                                     <label for="tanggal_masuk" class="form-label fw-bold">Tanggal Masuk <sup
                                             class="text-danger">*</sup></label>
                                     <input type="date" name="tanggal_masuk"
-                                        class="form-control @error('tanggal_masuk') is-invalid @enderror tanggal_flat" id="tanggal_masuk"
-                                        value="{{ old('tanggal_masuk') }}">
+                                        class="form-control @error('tanggal_masuk') is-invalid @enderror tanggal_flat"
+                                        id="tanggal_masuk" value="{{ old('tanggal_masuk') }}">
                                     @error('tanggal_masuk')
                                         <div class="invalid-feedback">
                                             {{ $message }}

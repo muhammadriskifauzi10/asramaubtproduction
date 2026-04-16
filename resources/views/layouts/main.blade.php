@@ -96,7 +96,7 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
 
             flatpickr(".tanggal_flat", {
-                dateFormat: "d/m/Y"
+                dateFormat: "d/m/Y",
             });
         });
 
