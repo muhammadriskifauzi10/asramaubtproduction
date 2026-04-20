@@ -33,7 +33,7 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 |
 */
 
-require __DIR__.'/../../asramaubtproduction/vendor/autoload.php';
+require __DIR__.'/../../roemah54/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +46,7 @@ require __DIR__.'/../../asramaubtproduction/vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../../asramaubtproduction/bootstrap/app.php';
+$app = require_once __DIR__.'/../../roemah54/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 
