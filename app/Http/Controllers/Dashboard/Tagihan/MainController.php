@@ -133,9 +133,11 @@ class MainController extends Controller
             try {
                 DB::beginTransaction();
 
-                $now = date('Y-m-d H:i:s');
+                // $now = date('Y-m-d H:i:s');
 
                 $no_invoice = request()->input('no_invoice');
+                $tanggal_bayar = request()->input('tanggal_bayar');
+                $tgl_bayar = Carbon::createFromFormat('d/m/Y H:i', $tanggal_bayar);
                 $jumlah_uang = request()->input('jumlah_uang') ? str_replace('.', '', request()->input('jumlah_uang')) : 0;
                 $metode_pembayaran = request()->input('metode_pembayaran');
 
@@ -158,7 +160,7 @@ class MainController extends Controller
                 }
 
                 $update = Pembayaran::where('no_invoice', $no_invoice)->update([
-                    'tanggal_pembayaran' => $now,
+                    'tanggal_pembayaran' => $tgl_bayar,
                     'total_bayar' => $pembayaran->total_bayar + $jumlah_uang,
                     'status_pembayaran' => $status
                 ]);
@@ -197,7 +199,7 @@ class MainController extends Controller
                     Transaksi::create([
                         'no_invoice' => $no_invoice,
                         'no_transaksi' => $no_transaksi,
-                        'tanggal_transaksi' => $now,
+                        'tanggal_transaksi' => $tgl_bayar,
                         'jumlah_uang' => $jumlah_uang,
                         'metode_pembayaran' => $metode_pembayaran,
                         'file_bukti' => $file_bukti,

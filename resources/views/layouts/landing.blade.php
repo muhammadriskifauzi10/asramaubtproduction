@@ -10,7 +10,7 @@
     <link rel="icon" href="images/ubt-logo.webp">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- ✅ Tailwind CDN -->
+    <!-- ✅ Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -136,8 +136,8 @@
 
         <!-- CONTENT -->
         <div
-            class="relative z-10 w-full max-w-6xl 
-            grid grid-cols-1 md:grid-cols-2 
+            class="relative z-10 w-full max-w-6xl
+            grid grid-cols-1 md:grid-cols-2
             gap-6 md:gap-10 items-center">
 
             <!-- LEFT -->
@@ -166,10 +166,10 @@
             <!-- RIGHT -->
             <div id="login-card">
                 <div
-                    class="w-full max-w-md mx-auto 
-                    backdrop-blur-2xl bg-white/10 border border-white/20 
-                    rounded-2xl md:rounded-[2rem] 
-                    p-6 md:p-8 text-white 
+                    class="w-full max-w-md mx-auto
+                    backdrop-blur-2xl bg-white/10 border border-white/20
+                    rounded-2xl md:rounded-[2rem]
+                    p-6 md:p-8 text-white
                     shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
                     <h2 class="text-xl md:text-2xl font-semibold text-center mb-2">
@@ -182,15 +182,15 @@
 
                     @if (session('error'))
                         <div
-                            class="mb-4 bg-red-500/20 border border-red-400 
+                            class="mb-4 bg-red-500/20 border border-red-400
                             text-red-200 px-4 py-3 rounded-lg text-sm text-center">
                             {{ session('error') }}
                         </div>
                     @else
                         <a href="{{ \App\Http\Middleware\Sso::getLoginLink() }}"
-                            class="block text-center bg-gradient-to-r from-blue-600 to-blue-700 
-                            hover:scale-105 transition duration-300 
-                            rounded-xl px-5 py-2.5 md:px-6 md:py-3 
+                            class="block text-center bg-gradient-to-r from-blue-600 to-blue-700
+                            hover:scale-105 transition duration-300
+                            rounded-xl px-5 py-2.5 md:px-6 md:py-3
                             text-base md:text-lg font-semibold shadow-lg">
                             Login SSO UBT
                         </a>

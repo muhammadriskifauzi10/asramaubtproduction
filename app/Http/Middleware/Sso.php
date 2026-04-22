@@ -30,21 +30,27 @@ class Sso
             return redirect('/');
         } else {
             $user = User::where('sso_id', $login->payload->id)->first();
+
             if (!$user) {
 
                 if (config('setting.auto_create_user')) {
                     $user = $this->createUserFromSso($login->payload);
                 }
             } else {
-                if ($user->photo !== $login->payload->photo) {
-                    $user->photo = $login->payload->photo;
-                    $user->save();
+
+                if ($user->status == 0) {
+                    return redirect('/');
+                } else {
+                    if ($user->photo !== $login->payload->photo) {
+                        $user->photo = $login->payload->photo;
+                        $user->save();
+                    }
+                    if ($user->name !== $login->payload->name) {
+                        $user->name = $login->payload->name;
+                        $user->save();
+                    }
+                    Auth::login($user);
                 }
-                if ($user->name !== $login->payload->name) {
-                    $user->name = $login->payload->name;
-                    $user->save();
-                }
-                Auth::login($user);
             }
             return $next($request);
         }

@@ -159,6 +159,20 @@
                 // fixedColumns: {
                 //     left: 3,
                 // }
+                dom: "lBfrtip",
+                buttons: [{
+                    extend: "excel",
+                    text: "Export Excel",
+                    filename: "tagihan",
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: ':not(:first-child)',
+                        modifier: {
+                            search: "none",
+                        },
+                    },
+                    title: `Tagihan`
+                }, ],
                 drawCallback: function() {
                     // var api = this.api();
 
@@ -237,6 +251,10 @@
                     <div class="modal-body">
                         <input type="hidden" name="no_invoice" value="${no_invoice}">
                         <div class="mb-3">
+                            <label for="tanggal_bayar" class="form-label fw-bold">Tanggal Bayar <sup class="text-danger">*</sup></label>
+                            <input type="date" name="tanggal_bayar" id="tanggal_bayar" class="form-control tanggal_flat">
+                        </div>
+                        <div class="mb-3">
                             <label for="jumlah_uang" class="form-label fw-bold">Jumlah Uang <sup
                                     class="text-danger">*</sup></label>
                             <div class="input-group">
@@ -270,6 +288,11 @@
                 </form>
             `);
 
+            flatpickr(".tanggal_flat", {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i",
+            });
+
             new AutoNumeric('#jumlah_uang', {
                 digitGroupSeparator: '.',
                 decimalCharacter: ',',
@@ -283,6 +306,7 @@
         function requestBayar(e) {
             e.preventDefault();
 
+            let tanggal_bayar = $("#tanggal_bayar").val();
             let jumlah_uang_raw = $("#jumlah_uang").val();
 
             // hapus titik (format rupiah)
@@ -294,8 +318,15 @@
             let isValid = true;
 
             // reset error dulu
+            $('#tanggal_bayar').removeClass('is-invalid');
             $('#jumlah_uang').removeClass('is-invalid');
             $('#file_bukti').removeClass('is-invalid');
+
+            // validasi tanggal bayar
+            if (tanggal_bayar == '') {
+                $('#tanggal_bayar').addClass('is-invalid');
+                isValid = false;
+            }
 
             // validasi jumlah uang
             if (jumlah_uang <= 0) {

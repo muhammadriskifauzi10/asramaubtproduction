@@ -23,7 +23,11 @@ class CheckUserAccess
             $user = User::where('sso_id', $authenticated->payload->id)->first();
 
             if ($user) {
-                return redirect(RouteServiceProvider::HOME);
+                if ($user->status == 0) {
+                    session()->flash('error', 'Anda tidak memiliki akses sistem ini');
+                } else {
+                    return redirect(RouteServiceProvider::HOME);
+                }
             } else {
                 if (config('setting.auto_create_user')) {
                     $sso = new Sso();

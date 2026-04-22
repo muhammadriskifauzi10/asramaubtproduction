@@ -42,12 +42,18 @@
 </head>
 
 <body style="background-color: #eef0f8; position: relative;">
+
     {{-- @if (!request()->is('scan*')) --}}
     @include('layouts.navbar')
-    {{-- @endif --}}
-    <main>
-        @yield('contents')
-    </main>
+
+    @if (auth()->user()->role_id == 8 || auth()->user()->role_id == 0)
+    @else
+        {{-- @endif --}}
+        <main>
+            @yield('contents')
+        </main>
+    @endif
+
     <!-- Modal Universal -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="universalModalLabel" aria-hidden="true">
         <div class="modal-dialog" id="universalModalContent">

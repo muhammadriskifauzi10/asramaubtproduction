@@ -85,6 +85,20 @@
                 // fixedColumns: {
                 //     left: 3,
                 // }
+                dom: "lBfrtip",
+                buttons: [{
+                    extend: "excel",
+                    text: "Export Excel",
+                    filename: "daftar_kamar",
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: ':not(:first-child)',
+                        modifier: {
+                            search: "none",
+                        },
+                    },
+                    title: `Daftar Kamar`
+                }, ],
                 drawCallback: function() {
                     var tooltipTriggerList = [].slice.call(
                         document.querySelectorAll('[data-bs-toggle="tooltip"]')
