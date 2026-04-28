@@ -46,13 +46,10 @@
     {{-- @if (!request()->is('scan*')) --}}
     @include('layouts.navbar')
 
-    @if (auth()->user()->role_id == 8 || auth()->user()->role_id == 0)
-    @else
-        {{-- @endif --}}
-        <main>
-            @yield('contents')
-        </main>
-    @endif
+    {{-- @endif --}}
+    <main>
+        @yield('contents')
+    </main>
 
     <!-- Modal Universal -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="universalModalLabel" aria-hidden="true">
