@@ -22,6 +22,11 @@ class Transaksi extends Model
         'operator_id'
     ];
 
+    public function tagihan()
+    {
+        return $this->hasOne(Pembayaran::class, 'no_invoice', 'no_invoice');
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'operator_id');

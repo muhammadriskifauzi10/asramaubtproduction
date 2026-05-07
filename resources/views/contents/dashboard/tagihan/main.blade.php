@@ -62,6 +62,7 @@
                                     <th scope="col" width="50"></th>
                                     <th scope="col">NAMA</th>
                                     <th scope="col">NIM</th>
+                                    <th scope="col">BILL TO</th>
                                     <th scope="col">NO INVOICE</th>
                                     <th scope="col">STATUS PEMBAYARAN</th>
                                     <th scope="col">TANGGAL MASUK</th>
@@ -78,6 +79,22 @@
                             </thead>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cetak Kwitansi -->
+    <div class="modal fade" id="modalCetakKwitansi" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kwitansi Pembayaran</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe id="iframeCetakKwitansi" src="" width="100%" height="600px"
+                        style="border:none;"></iframe>
                 </div>
             </div>
         </div>
@@ -111,6 +128,9 @@
                     },
                     {
                         data: "nim",
+                    },
+                    {
+                        data: "nama_bill_to",
                     },
                     {
                         data: "no_invoice",
@@ -389,7 +409,18 @@
 
                         $("#universalModal").modal("hide");
 
-                        table.ajax.reload()
+                        var pdfUrl = `{{ url('transaksi/kwitansi/') }}/${response.no_transaksi}`;
+
+                        // set iframe src ke PDF kwitansi
+                        $("#iframeCetakKwitansi").attr("src", pdfUrl);
+
+                        // tampilkan modal popup
+                        $("#modalCetakKwitansi").modal("show");
+
+                        // ✅ reload setelah modal ditutup
+                        $("#modalCetakKwitansi").on("hidden.bs.modal", function() {
+                            table.ajax.reload()
+                        });
                     } else {
                         Swal.fire({
                             icon: response.icon,

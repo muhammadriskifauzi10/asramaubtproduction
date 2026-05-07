@@ -97,6 +97,7 @@ class MainController extends Controller
                 'durasi' => $row->durasi . ' Bulan',
                 'nama' => $row->penyewa->namalengkap,
                 'nim' => $row->penyewa->nim,
+                'nama_bill_to' => $row->nama_bill_to,
                 'kamar' => $row->kamar->nomor_kamar,
                 'total_tagihan' => 'RP. ' . number_format($row->total_tagihan, '0', '.', '.'),
                 'total_potongan_harga' => 'RP. ' . number_format($row->total_potongan_harga, '0', '.', '.'),
@@ -211,7 +212,8 @@ class MainController extends Controller
                 return response()->json([
                     'status' => 200,
                     'message' => 'Pembayaran berhasil ditambahkan!',
-                    'icon' => 'success'
+                    'icon' => 'success',
+                    'no_transaksi' => encrypt($no_transaksi)
                 ]);
             } catch (Exception $e) {
                 DB::rollBack();

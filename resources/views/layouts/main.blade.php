@@ -39,6 +39,12 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     @yield('mystyles')
+
+    <style>
+        .no-cursor {
+            user-select: none;
+        }
+    </style>
 </head>
 
 <body style="background-color: #eef0f8; position: relative;">

@@ -14,7 +14,7 @@ class MainController extends Controller
     public function index()
     {
         $data = [
-            'judul' => 'Transaksi',
+            'judul' => 'Pembayaran',
         ];
 
         return view('contents.dashboard.transaksi.main', $data);
@@ -49,16 +49,17 @@ class MainController extends Controller
             </div>
             ';
 
-            $file_bukti = '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold">FILE BUKTI</a>';
+            // $file_bukti = '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold">FILE BUKTI</a>';
 
             $output[] = [
                 'aksi' => $aksi,
                 'no_invoice' => $row->no_invoice,
                 'no_transaksi' => $row->no_transaksi,
+                'nama' => $row->tagihan->penyewa->namalengkap,
                 'tanggal_transaksi' => Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i'),
                 'jumlah_uang' => 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.'),
                 'metode_pembayaran' => $row->metode_pembayaran,
-                'file_bukti' => $file_bukti,
+                'file_bukti' => '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold no-cursor">' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '</a>',
                 'operator' => $row->user->name,
             ];
         }

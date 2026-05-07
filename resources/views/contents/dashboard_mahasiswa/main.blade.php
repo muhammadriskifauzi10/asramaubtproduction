@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <div class="row justify-content-start">
                             <div class="col-xl-4">
-                                <table class="50">
+                                <table class="t-top">
                                     <tbody>
                                         <tr>
                                             <td>NAMA</td>
@@ -26,7 +26,10 @@
                                         <tr>
                                             <td>NIM</td>
                                             <td width="20" class="text-right">:</td>
-                                            <td>{{ auth()->user()->identifier }}</td>
+                                            <td>
+                                                <img src="https://bwipjs-api.metafloor.com/?bcid=code128&text={{ auth()->user()->identifier }}&scale=3&height=10&includetext"
+                                                    alt="Barcode Mahasiswa" class="rounded shadow-sm">
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

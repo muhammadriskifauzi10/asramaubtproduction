@@ -143,6 +143,20 @@
                 // fixedColumns: {
                 //     left: 3,
                 // }
+                dom: "lBfrtip",
+                buttons: [{
+                    extend: "excel",
+                    text: "Export Excel",
+                    filename: "piutang",
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        // columns: ':not(:first-child)',
+                        modifier: {
+                            search: "none",
+                        },
+                    },
+                    title: `Piutang`
+                }, ],
                 drawCallback: function() {
                     // var api = this.api();
 

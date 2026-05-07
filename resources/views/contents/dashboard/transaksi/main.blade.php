@@ -61,8 +61,9 @@
                                 <tr>
                                     <th scope="col" width="50"></th>
                                     <th scope="col">NO INVOICE</th>
-                                    <th scope="col">NO TRANSAKSI</th>
-                                    <th scope="col">TANGGAL TRANSAKSI</th>
+                                    <th scope="col">NO KUITANSI</th>
+                                    <th scope="col">NAMA</th>
+                                    <th scope="col">TANGGAL PEMBAYARAN</th>
                                     <th scope="col">JUMLAH UANG</th>
                                     <th scope="col">METODE PEMBAYARAN</th>
                                     <th scope="col">FILE BUKTI</th>
@@ -106,6 +107,9 @@
                         data: "no_transaksi",
                     },
                     {
+                        data: "nama",
+                    },
+                    {
                         data: "tanggal_transaksi",
                     },
                     {
@@ -131,6 +135,20 @@
                 // fixedColumns: {
                 //     left: 3,
                 // }
+                dom: "lBfrtip",
+                buttons: [{
+                    extend: "excel",
+                    text: "Export Excel",
+                    filename: "pembayaran",
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: ':not(:first-child)',
+                        modifier: {
+                            search: "none",
+                        },
+                    },
+                    title: `Pembayaran`
+                }, ],
                 drawCallback: function() {
                     // var api = this.api();
 

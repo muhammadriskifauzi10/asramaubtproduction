@@ -16,11 +16,12 @@ use App\Http\Controllers\Dashboard\Tagih\MainController as TagihMainController;
 use App\Http\Controllers\Dashboard\Tagihan\MainController as TagihanMainController;
 use App\Http\Controllers\Dashboard\Tipeasrama\MainController as TipeasramaMainController;
 use App\Http\Controllers\Dashboard\Tipecatering\MainController as TipecateringMainController;
-use App\Models\Harga;
-use App\Models\Pembayaran;
-use App\Models\Penyewa;
-use Carbon\Carbon;
+use App\Http\Controllers\ScanmakanController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/scanmakan', [ScanmakanController::class, 'index'])->name('scanmakan');
+Route::post('/scanmakan/datatablescanmakan', [ScanmakanController::class, 'datatablescanmakan'])->name('scanmakan.datatablescanmakan');
+Route::post('/scanmakan', [ScanmakanController::class, 'scan'])->name('scanmakan.scan');
 
 // GUEST
 Route::middleware(['check-access'])->group(function () {
@@ -29,42 +30,6 @@ Route::middleware(['check-access'])->group(function () {
 
 // AUTH
 Route::middleware(['sso'])->group(function () {
-    // Route::get('/tes', function () {
-    //     $today = Carbon::today();
-
-    //     $penyewaList = Penyewa::all();
-
-    //     foreach ($penyewaList as $p) {
-
-    //         if ($p->kip == 'nonkip') {
-    //             $harga_id = 3;
-
-    //             $harga = Harga::find($harga_id);
-    //         } else {
-    //             $harga_id = 4;
-
-    //             $harga = Harga::find($harga_id);
-    //         }
-
-    //         Pembayaran::create([
-    //             'harga_id' => $harga_id,
-    //             'tanggal_pembayaran' => null,
-    //             'tanggal_masuk' => $today,
-    //             'tanggal_keluar' => $today->copy()->addMonth(),
-    //             'penyewa_id' => $p->id,
-    //             'kamar_id' => null,
-    //             'jenissewa' => 'Catering',
-    //             'jumlah_pembayaran' => intval($harga->harga),
-    //             'potongan_harga' => 0,
-    //             'total_bayar' => 0,
-    //             'status_pembayaran' => 'pending',
-    //             'status' => 1,
-    //             'operator_id' => auth()->user()->id,
-    //         ]);
-    //     }
-    // });
-
-
     Route::get('/login-check', [LoginController::class, 'index'])->name('login-check');
 
     Route::get('/dasbor', [MainController::class, 'index'])->name('dasbor');

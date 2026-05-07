@@ -135,6 +135,20 @@
                 // fixedColumns: {
                 //     left: 3,
                 // }
+                dom: "lBfrtip",
+                buttons: [{
+                    extend: "excel",
+                    text: "Export Excel",
+                    filename: "omset",
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        // columns: ':not(:first-child)',
+                        modifier: {
+                            search: "none",
+                        },
+                    },
+                    title: `Omset`
+                }, ],
                 drawCallback: function() {
                     // var api = this.api();
 

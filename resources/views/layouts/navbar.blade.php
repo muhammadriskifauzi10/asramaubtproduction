@@ -2,12 +2,15 @@
     <div class="container-fluid navbar-child">
         <div class="navbar-child-1">
             <a class="navbar-brand yellow fw-bold logo" href="{{ route('dasbor') }}">{{ env('APP_NAME') }}</a>
-            <div class="d-flex gap-2">
-                <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                    aria-controls="offcanvasMenu" id="btnOpenSidebarMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
+            @if (auth()->user()->role_id == 8 || auth()->user()->role_id == 0)
+            @else
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                        aria-controls="offcanvasMenu" id="btnOpenSidebarMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            @endif
         </div>
 
         <div class="navbar-child-2">
@@ -76,27 +79,27 @@
 
                 <div class="sidebar-title">Laporan</div>
 
-                <a href="{{ route('transaksi') }}"
-                    class="list-group-item sidebar-link {{ request()->is('transaksi') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span>Transaksi</span>
-                </a>
-
-                <a href="#" class="list-group-item sidebar-link">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Rekap Peserta Catering</span>
-                </a>
-
                 <a href="{{ route('omset') }}"
                     class="list-group-item sidebar-link {{ request()->is('omset*') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Omset</span>
                 </a>
 
+                <a href="{{ route('transaksi') }}"
+                    class="list-group-item sidebar-link {{ request()->is('transaksi') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Pembayaran</span>
+                </a>
+
                 <a href="{{ route('piutang') }}"
                     class="list-group-item sidebar-link {{ request()->is('piutang*') ? 'active' : '' }}">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                     <span>Piutang</span>
+                </a>
+
+                <a href="#" class="list-group-item sidebar-link">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Rekap Peserta Catering</span>
                 </a>
 
                 <div class="sidebar-title">Master Data</div>

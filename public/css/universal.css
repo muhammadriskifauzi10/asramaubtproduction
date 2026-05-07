@@ -172,6 +172,10 @@ h6 {
     vertical-align: baseline;
 }
 
+table.t-top * {
+    vertical-align: text-top;
+}
+
 /* .table.not-va-left * {
     text-align: left;
     text-align: baseline !important;

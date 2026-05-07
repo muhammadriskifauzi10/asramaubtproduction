@@ -159,11 +159,11 @@
             <tr>
                 <td>Periode</td>
                 <td>: {{ \Carbon\Carbon::parse($tagihan->tanggal_masuk)->format('d-m-Y') }} -
-                    {{ \Carbon\Carbon::parse($tagihan->keluar)->format('d-m-Y') }}</td>
+                    {{ \Carbon\Carbon::parse($tagihan->tanggal_keluar)->format('d-m-Y') }}</td>
             </tr>
             <tr>
-                <td>Tanggal Tagihan</td>
-                <td>: {{ \Carbon\Carbon::parse($tagihan->created_at)->format('d-m-Y') }}</td>
+                <td>Tanggal</td>
+                <td>: {{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
             </tr>
             <tr>
                 <td>Keterangan</td>
@@ -190,9 +190,9 @@
         <div style="margin-top:40px; display:flex; justify-content:space-between; align-items:flex-start;">
 
             {{-- Kiri: Tanggal Cetak --}}
-            <div class="footer-left">
+            {{-- <div class="footer-left">
                 Dicetak pada: {{ now()->format('d-m-Y H:i') }}
-            </div>
+            </div> --}}
 
             {{-- Kanan: Operator / TTD --}}
             <div class="footer-right" style="text-align:center; width:200px;">
