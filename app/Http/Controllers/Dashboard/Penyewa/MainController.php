@@ -39,22 +39,20 @@ class MainController extends Controller
         foreach ($penyewa as $row) {
 
             // asrama
-            if($row->status_asrama == 1) {
+            if ($row->status_asrama == 1) {
                 $btn1 = '<button type="button" class="btn btn-warning fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Hentikan Asrama" style="width: 40px;" onclick="onHentikanAsrama(' . $row->id . ')">
                     <i class="fa fa-door-open"></i>
                 </button>';
-            }
-            else {
+            } else {
                 $btn1 = '';
             }
 
             // catering
-            if($row->status_catering == 1) {
+            if ($row->status_catering == 1) {
                 $btn2 = '<button type="button" class="btn btn-warning fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Hentikan Catering" style="width: 40px;" onclick="onHentikanCatering(' . $row->id . ')">
                     <i class="fa fa-utensils"></i>
                 </button>';
-            }
-            else {
+            } else {
                 $btn2 = '';
             }
 
@@ -178,7 +176,7 @@ class MainController extends Controller
                 ]);
 
                 Pembayaran::where('penyewa_id', $id)->update([
-                     'status_asrama' => 0
+                    'status_asrama' => 0
                 ]);
 
                 Kamar::where('id', $pembayaran->kamar_id)->decrement('jumlah_penyewa');
@@ -212,7 +210,7 @@ class MainController extends Controller
                 ]);
 
                 Pembayaran::where('penyewa_id', $id)->update([
-                     'status_catering' => 0
+                    'status_catering' => 0
                 ]);
 
                 DB::commit();

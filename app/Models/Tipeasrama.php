@@ -16,5 +16,6 @@ class Tipeasrama extends Model
 
     protected $fillable = [
         'nama',
+        'jumlah_lantai',
     ];
 }

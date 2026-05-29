@@ -30,6 +30,22 @@
                                     @enderror
                                 </div>
                             </div>
+                            {{-- jumlah_lantai --}}
+                            <div class="row mb-3">
+                                <label for="jumlah_lantai" class="col-xl-2 col-form-label fw-bold">Jumlah Lantai <sup
+                                        class="text-danger">*</sup></label>
+                                <div class="col-xl-10">
+                                    <input type="number" name="jumlah_lantai"
+                                        class="form-control @error('jumlah_lantai') is-invalid @enderror"
+                                        placeholder="Masukkan jumlah lantai" value="{{ old('jumlah_lantai') }}" id="jumlah_lantai"
+                                        autofocus />
+                                    @error('jumlah_lantai')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="d-flex align-items-center justify-content-end">
                                 <button type="submit" class="btn btn-success" id="btn-submit">
                                     <i class="fa fa-paper-plane me-1"></i> Simpan

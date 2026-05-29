@@ -25,6 +25,7 @@
                                 <tr>
                                     <th scope="col" width="50"></th>
                                     <th scope="col">NAMA</th>
+                                    <th scope="col">JUMLAH LANTAI</th>
                                 </tr>
                             </thead>
                         </table>
@@ -53,6 +54,9 @@
                     },
                     {
                         data: "nama",
+                    },
+                    {
+                        data: "jumlah_lantai",
                     },
                 ],
                 // "order": [

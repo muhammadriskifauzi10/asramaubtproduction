@@ -37,6 +37,7 @@ class MainController extends Controller
             $output[] = [
                 'aksi' => $aksi,
                 'nama' => $row->nama,
+                'jumlah_lantai' => $row->jumlah_lantai,
             ];
         }
 
@@ -56,8 +57,10 @@ class MainController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'nama' => ['required'],
+            'jumlah_lantai' => ['required'],
         ], [
             'nama.required' => 'Kolom ini wajib diisi',
+            'jumlah_lantai.required' => 'Kolom ini wajib diisi',
         ]);
 
 
@@ -72,9 +75,11 @@ class MainController extends Controller
             DB::beginTransaction();
 
             $nama = request()->input('nama');
+            $jumlah_lantai = request()->input('jumlah_lantai');
 
             $post = Tipeasrama::create([
                 'nama' => $nama,
+                'jumlah_lantai' => $jumlah_lantai,
             ]);
 
             if ($post) {
@@ -105,8 +110,10 @@ class MainController extends Controller
 
         $validator = Validator::make(request()->all(), [
             'nama' => ['required'],
+            'jumlah_lantai' => ['required'],
         ], [
             'nama.required' => 'Kolom ini wajib diisi',
+            'jumlah_lantai.required' => 'Kolom ini wajib diisi',
         ]);
 
 
@@ -121,9 +128,11 @@ class MainController extends Controller
             DB::beginTransaction();
 
             $nama = request()->input('nama');
+            $jumlah_lantai = request()->input('jumlah_lantai');
 
             Tipeasrama::where('id', $id)->update([
                 'nama' => $nama,
+                'jumlah_lantai' => $jumlah_lantai,
             ]);
 
             DB::commit();

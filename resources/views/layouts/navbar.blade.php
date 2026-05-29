@@ -104,11 +104,11 @@
 
                 <div class="sidebar-title">Master Data</div>
 
-                <a href="{{ route('lantai') }}"
+                {{-- <a href="{{ route('lantai') }}"
                     class="list-group-item sidebar-link {{ request()->is('lantai*') ? 'active' : '' }}">
                     <i class="fa-solid fa-layer-group"></i>
                     <span>Lantai</span>
-                </a>
+                </a> --}}
 
                 <a href="{{ route('tipeasrama') }}"
                     class="list-group-item sidebar-link {{ request()->is('tipeasrama*') ? 'active' : '' }}">

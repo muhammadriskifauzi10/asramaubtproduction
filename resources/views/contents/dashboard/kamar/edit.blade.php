@@ -40,11 +40,11 @@
                                 <div class="col-xl-10">
                                     <select name="tipeasrama"
                                         class="form-control form-select-2 @error('tipeasrama') is-invalid @enderror"
-                                        id="tipeasrama" style="width: 100%">
+                                        id="tipeasrama" style="width: 100%" onchange="onTipeAsrama()">
                                         <option value="">Pilih Tipe Asrama</option>
                                         @foreach (\App\Models\Tipeasrama::all() as $row)
                                             <option value="{{ $row->id }}"
-                                                {{ old('tipeasrama', $datakamar->tipeasrama_id) == $row->id ? 'selected' : '' }}>
+                                                {{ old('tipeasrama', $datakamar->tipe_asrama_id) == $row->id ? 'selected' : '' }}>
                                                 {{ $row->nama }}
                                             </option>
                                         @endforeach
@@ -65,12 +65,6 @@
                                         class="form-control form-select-2 @error('lantai') is-invalid @enderror"
                                         id="lantai" style="width: 100%">
                                         <option value="">Pilih Lantai</option>
-                                        @foreach (\App\Models\Lantai::all() as $row)
-                                            <option value="{{ $row->id }}"
-                                                {{ old('lantai', $datakamar->lantai_id) == $row->id ? 'selected' : '' }}>
-                                                {{ $row->nama }}
-                                            </option>
-                                        @endforeach
                                     </select>
                                     @error('lantai')
                                         <div class="invalid-feedback">
@@ -138,5 +132,35 @@
                 }, 1);
             })
         })
+
+        onTipeAsrama()
+
+        function onTipeAsrama(id = null) {
+            let tipeAsramaId = id || $('#tipeasrama').val();
+
+            $.ajax({
+                url: "{{ route('getlantai') }}",
+                type: "GET",
+                data: {
+                    id: tipeAsramaId,
+                    lantai: '{{ old('lantai', $datakamar->lantai) }}'
+                },
+                beforeSend: function() {
+                    $('#lantai').empty();
+
+                    $('#lantai').append(`
+                        <option value="">Pilih Lantai</option>
+                    `);
+                },
+                success: function(response) {
+
+                    if (response.status == 200) {
+                        $('#lantai').append(response.outputselection);
+                    }
+
+                }
+            });
+
+        }
     </script>
 @endpush

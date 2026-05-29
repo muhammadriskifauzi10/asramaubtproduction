@@ -15,7 +15,7 @@ class Kamar extends Model
     protected $fillable = [
         'token_listrik',
         'tipe_asrama_id',
-        'lantai_id',
+        'lantai',
         'nomor_kamar',
         'kapasitas',
         'jumlah_penyewa',

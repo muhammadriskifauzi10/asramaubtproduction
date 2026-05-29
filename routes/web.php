@@ -17,7 +17,36 @@ use App\Http\Controllers\Dashboard\Tagihan\MainController as TagihanMainControll
 use App\Http\Controllers\Dashboard\Tipeasrama\MainController as TipeasramaMainController;
 use App\Http\Controllers\Dashboard\Tipecatering\MainController as TipecateringMainController;
 use App\Http\Controllers\ScanmakanController;
+use App\Models\Tipeasrama;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/getlantai', function () {
+    if (request()->ajax()) {
+        $id = request()->input('id');
+        $lantai = request()->input('lantai') ?? '';
+
+        $tipeasrama = Tipeasrama::where('id', $id)->first();
+
+        $outputselection = [];
+        if ($tipeasrama) {
+            for ($i = 1; $i <= $tipeasrama->jumlah_lantai; $i++) {
+                $selected = '';
+                if ($lantai == $i) {
+                    $selected = 'selected';
+                }
+
+                $outputselection[] = '<option value="' . $i . '" ' . $selected . '>Lantai ' . $i . '</option>';
+            }
+        }
+
+        return response()->json(
+            [
+                'status' => 200,
+                'outputselection' => $outputselection
+            ]
+        );
+    }
+})->name('getlantai');
 
 Route::get('/scanmakan', [ScanmakanController::class, 'index'])->name('scanmakan');
 Route::post('/scanmakan/datatablescanmakan', [ScanmakanController::class, 'datatablescanmakan'])->name('scanmakan.datatablescanmakan');

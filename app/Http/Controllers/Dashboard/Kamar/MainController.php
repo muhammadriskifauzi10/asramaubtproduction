@@ -22,7 +22,7 @@ class MainController extends Controller
     }
     public function datatablekamar()
     {
-        $kamar = Kamar::orderby('lantai_id', 'ASC')->get();
+        $kamar = Kamar::orderby('tipe_asrama_id', 'ASC')->orderby('lantai', 'ASC')->orderby('nomor_kamar', 'ASC')->get();
 
         $output = [];
         $no = 1;
@@ -40,7 +40,7 @@ class MainController extends Controller
                 'aksi' => $aksi,
                 'token_listrik' => $row->token_listrik,
                 'type' => $row->type->nama ?? '',
-                'lantai' => $row->lantai->nama,
+                'lantai' => $row->lantai,
                 'nomor_kamar' => $row->nomor_kamar,
                 'kapasitas' => $row->kapasitas,
                 'jumlah_penyewa' => $row->jumlah_penyewa
@@ -61,6 +61,18 @@ class MainController extends Controller
     }
     public function create()
     {
+        $token_listrik = request()->input('token_listrik');
+        $tipeasrama = request()->input('tipeasrama');
+        $lantai = request()->input('lantai');
+        $nomor_kamar = request()->input('nomor_kamar');
+        $kapasitas = request()->input('kapasitas');
+
+        if (Kamar::where('tipe_asrama_id', $tipeasrama)->where('lantai', $lantai)->where('nomor_kamar', $nomor_kamar)->exists()) {
+            $rule_no_kamar = ['required', 'unique:kamar,nomor_kamar'];
+        } else {
+            $rule_no_kamar = ['required'];
+        }
+
         $validator = Validator::make(request()->all(), [
             // 'token_listrik' => ['required'],
             'tipeasrama' => [
@@ -70,18 +82,13 @@ class MainController extends Controller
                     }
                 },
             ],
-            'lantai' => [
-                function ($attribute, $value, $fail) {
-                    if (!Lantai::where('id', (int)$value)->exists()) {
-                        $fail('Kolom ini wajib dipilih');
-                    }
-                },
-            ],
+            'lantai' => ['required'],
             // 'nomor_kamar' => ['required', 'unique:kamar,nomor_kamar'],
-            'nomor_kamar' => ['required'],
+            'nomor_kamar' => $rule_no_kamar,
             'kapasitas' => ['required', 'integer'],
         ], [
             // 'token_listrik.required' => 'Kolom ini wajib diisi',
+            'lantai.required' => 'Kolom ini wajib diisi',
             'nomor_kamar.required' => 'Kolom ini wajib diisi',
             'nomor_kamar.unique' => 'Kolom sudah terdaftar',
             'kapasitas.required' => 'Kolom ini wajib diisi',
@@ -99,16 +106,10 @@ class MainController extends Controller
         try {
             DB::beginTransaction();
 
-            $token_listrik = request()->input('token_listrik');
-            $tipeasrama = request()->input('tipeasrama');
-            $lantai = request()->input('lantai');
-            $nomor_kamar = request()->input('nomor_kamar');
-            $kapasitas = request()->input('kapasitas');
-
             $post = Kamar::create([
                 'token_listrik' => $token_listrik,
                 'tipe_asrama_id' => $tipeasrama,
-                'lantai_id' => $lantai,
+                'lantai' => $lantai,
                 'nomor_kamar' => $nomor_kamar,
                 'kapasitas' => $kapasitas,
                 'operator_id' => auth()->user()->id
@@ -140,12 +141,17 @@ class MainController extends Controller
     {
         $id = decrypt($id);
         $kamar = Kamar::findorfail($id);
+        $token_listrik = request()->input('token_listrik');
+        $tipeasrama = request()->input('tipeasrama');
+        $lantai = request()->input('lantai');
+        $nomor_kamar = request()->input('nomor_kamar');
+        $kapasitas = request()->input('kapasitas');
 
-        // if ($kamar->nomor_kamar == request()->input('nomor_kamar')) {
-        //     $rule_nomor_kamar = ['required'];
-        // } else {
-        //     $rule_nomor_kamar = ['required', 'unique:kamar,nomor_kamar'];
-        // }
+        if ($kamar->tipe_asrama_id == request()->input('tipeasrama') && $kamar->lantai == request()->input('lantai') && $kamar->nomor_kamar == request()->input('nomor_kamar')) {
+            $rule_nomor_kamar = ['required'];
+        } else {
+            $rule_nomor_kamar = ['required', 'unique:kamar,nomor_kamar'];
+        }
 
         $validator = Validator::make(request()->all(), [
             // 'token_listrik' => ['required'],
@@ -164,7 +170,7 @@ class MainController extends Controller
                 },
             ],
             'nomor_kamar' => ['required'],
-            // 'nomor_kamar' => $rule_nomor_kamar,
+            'nomor_kamar' => $rule_nomor_kamar,
             'kapasitas' => ['required', 'integer'],
         ], [
             // 'token_listrik.required' => 'Kolom ini wajib diisi',
@@ -185,16 +191,10 @@ class MainController extends Controller
         try {
             DB::beginTransaction();
 
-            $token_listrik = request()->input('token_listrik');
-            $tipeasrama = request()->input('tipeasrama');
-            $lantai = request()->input('lantai');
-            $nomor_kamar = request()->input('nomor_kamar');
-            $kapasitas = request()->input('kapasitas');
-
             Kamar::where('id', $id)->update([
                 'token_listrik' => $token_listrik,
                 'tipe_asrama_id' => $tipeasrama,
-                'lantai_id' => $lantai,
+                'lantai' => $lantai,
                 'nomor_kamar' => $nomor_kamar,
                 'kapasitas' => $kapasitas,
                 'operator_id' => auth()->user()->id
