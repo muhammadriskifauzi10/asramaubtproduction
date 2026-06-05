@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('kamar') }}">Kembali</a></li>
+            <li class="breadcrumb-item"><a href="javascript:history.back()">Kembali</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ $judul }}</li>
         </ol>
 

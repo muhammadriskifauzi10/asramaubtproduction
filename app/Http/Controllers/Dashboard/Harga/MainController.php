@@ -14,7 +14,7 @@ class MainController extends Controller
     public function index()
     {
         $data = [
-            'judul' => 'Harga',
+            'judul' => 'Item Tagihan',
         ];
 
         return view('contents.dashboard.harga.main', $data);
@@ -51,7 +51,7 @@ class MainController extends Controller
     public function tambah()
     {
         $data = [
-            'judul' => 'Tambah Harga',
+            'judul' => 'Tambah Item Tagihan',
         ];
 
         return view('contents.dashboard.harga.tambah', $data);
@@ -109,7 +109,7 @@ class MainController extends Controller
         $harga = Harga::findorfail($id);
 
         $data = [
-            'judul' => 'Edit Harga',
+            'judul' => 'Edit Item Tagihan',
             'dataharga' => $harga
         ];
 

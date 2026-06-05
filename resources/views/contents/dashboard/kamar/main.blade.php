@@ -4,14 +4,15 @@
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">{{ $judul }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('tipeasrama') }}">Kembali</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ $judul }}</li>
         </ol>
         <div class="mb-2 d-flex align-content-center justify-content-end gap-2">
             <a href="javascript:void(0)" class="btn btn-info" onclick="onRefresh()">
                 <i class="fa-solid fa-arrows-rotate me-1"></i>
                 Refresh
             </a>
-            <a href="{{ route('kamar.tambah') }}" class="btn btn-dark">
+            <a href="{{ route('kamar.tambah', $tipeasrama) }}" class="btn btn-dark">
                 <i class="fa fa-plus me-1"></i>
                 {{ $judul }}
             </a>
@@ -51,7 +52,10 @@
                     url: "{{ route('kamar.datatablekamar') }}",
                     type: "POST",
                     // dataSrc: ""
-                    dataType: "json"
+                    dataType: "json",
+                    data: function(d) {
+                        d.tipeasrama = "{{ $tipeasrama }}";
+                    },
                 },
                 columns: [{
                         data: "aksi",

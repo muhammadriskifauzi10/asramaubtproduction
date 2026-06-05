@@ -110,14 +110,15 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/tipeasrama/tambah', [TipeasramaMainController::class, 'create'])->name('tipeasrama.post');
     Route::get('/tipeasrama/edit/{id}', [TipeasramaMainController::class, 'edit'])->name('tipeasrama.edit');
     Route::put('/tipeasrama/edit/{id}', [TipeasramaMainController::class, 'update'])->name('tipeasrama.update');
+    Route::get('/tipeasrama/tambahkamar/{id}', [TipeasramaMainController::class, 'tambahkamar'])->name('tipeasrama.tambahkamar');
 
     // kamar
-    Route::get('/kamar', [KamarMainController::class, 'index'])->name('kamar');
-    Route::post('/kamar/datatablekamar', [KamarMainController::class, 'datatablekamar'])->name('kamar.datatablekamar');
-    Route::get('/kamar/tambah', [KamarMainController::class, 'tambah'])->name('kamar.tambah');
-    Route::post('/kamar/tambah', [KamarMainController::class, 'create'])->name('kamar.post');
-    Route::get('/kamar/edit/{id}', [KamarMainController::class, 'edit'])->name('kamar.edit');
-    Route::put('/kamar/edit/{id}', [KamarMainController::class, 'update'])->name('kamar.update');
+    Route::get('/tipeasrama/kamar/{id}', [KamarMainController::class, 'index'])->name('kamar');
+    Route::post('/tipeasrama/kamar/datatablekamar', [KamarMainController::class, 'datatablekamar'])->name('kamar.datatablekamar');
+    Route::get('/tipeasrama/kamar/tambah/{id}', [KamarMainController::class, 'tambah'])->name('kamar.tambah');
+    Route::post('/tipeasrama/kamar/tambah', [KamarMainController::class, 'create'])->name('kamar.post');
+    Route::get('/tipeasrama/kamar/edit/{id}', [KamarMainController::class, 'edit'])->name('kamar.edit');
+    Route::put('/tipeasrama/kamar/edit/{id}', [KamarMainController::class, 'update'])->name('kamar.update');
 
     // harga
     Route::get('/harga', [HargaMainController::class, 'index'])->name('harga');

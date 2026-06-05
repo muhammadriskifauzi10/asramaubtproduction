@@ -12,17 +12,26 @@ use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
-    public function index()
+    public function index($id)
     {
+        if (!Tipeasrama::where('id', $id)->exists()) {
+            abort(404);
+        }
+
         $data = [
             'judul' => 'Kamar',
+            'tipeasrama' => $id
         ];
 
         return view('contents.dashboard.kamar.main', $data);
     }
     public function datatablekamar()
     {
-        $kamar = Kamar::orderby('tipe_asrama_id', 'ASC')->orderby('lantai', 'ASC')->orderby('nomor_kamar', 'ASC')->get();
+        $tipeasrama = request()->input('tipeasrama');
+
+        $kamar = Kamar::when($tipeasrama, function ($query) use ($tipeasrama) {
+            $query->where('tipe_asrama_id', $tipeasrama);
+        })->orderby('tipe_asrama_id', 'ASC')->orderby('lantai', 'ASC')->orderby('nomor_kamar', 'ASC')->get();
 
         $output = [];
         $no = 1;
@@ -51,10 +60,15 @@ class MainController extends Controller
             'data' => $output
         ]);
     }
-    public function tambah()
+    public function tambah($id)
     {
+        if (!Tipeasrama::where('id', $id)->exists()) {
+            abort(404);
+        }
+
         $data = [
             'judul' => 'Tambah Kamar',
+            'tipeasrama' => $id
         ];
 
         return view('contents.dashboard.kamar.tambah', $data);
@@ -117,7 +131,7 @@ class MainController extends Controller
 
             if ($post) {
                 DB::commit();
-                return redirect()->route('kamar')->with('messageSuccess', 'Kamar berhasil ditambahkan!');
+                return redirect()->back()->with('messageSuccess', 'Kamar berhasil ditambahkan!');
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -201,7 +215,7 @@ class MainController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('kamar')->with('messageSuccess', 'Kamar berhasil diperbarui!');
+            return redirect()->route('tipeasrama')->with('messageSuccess', 'Kamar berhasil diperbarui!');
         } catch (Exception $e) {
             DB::rollBack();
             echo $e->getMessage();

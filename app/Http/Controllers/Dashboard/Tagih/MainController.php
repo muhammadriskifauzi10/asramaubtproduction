@@ -13,7 +13,7 @@ class MainController extends Controller
     public function index()
     {
         $data = [
-            'judul' => 'Tagih',
+            'judul' => 'Kategori Tagihan',
         ];
 
         return view('contents.dashboard.tagih.main', $data);
@@ -47,7 +47,7 @@ class MainController extends Controller
     public function tambah()
     {
         $data = [
-            'judul' => 'Tambah Tagih',
+            'judul' => 'Tambah Kategori Tagihan',
         ];
 
         return view('contents.dashboard.tagih.tambah', $data);
@@ -93,7 +93,7 @@ class MainController extends Controller
         $tagih = Tagih::findorfail($id);
 
         $data = [
-            'judul' => 'Edit Tagih',
+            'judul' => 'Edit Kategori Tagihan',
             'datatagih' => $tagih
         ];
 

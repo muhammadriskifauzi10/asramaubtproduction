@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('kamar') }}">Kembali</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('kamar', $tipeasrama) }}">Kembali</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ $judul }}</li>
         </ol>
 
@@ -38,10 +38,10 @@
                                     <select name="tipeasrama"
                                         class="form-control form-select-2 @error('tipeasrama') is-invalid @enderror"
                                         id="tipeasrama" style="width: 100%" onchange="onTipeAsrama()">
-                                        <option value="">Pilih Tipe Asrama</option>
+                                        {{-- <option value="">Pilih Tipe Asrama</option> --}}
                                         @foreach (\App\Models\Tipeasrama::all() as $row)
                                             <option value="{{ $row->id }}"
-                                                {{ old('tipeasrama') == $row->id ? 'selected' : '' }}>{{ $row->nama }}
+                                                {{ $tipeasrama == $row->id ? 'selected' : 'disabled' }}>{{ $row->nama }}
                                             </option>
                                         @endforeach
                                     </select>

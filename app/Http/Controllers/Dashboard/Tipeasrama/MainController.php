@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard\Tipeasrama;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kamar;
 use App\Models\Tipeasrama;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -31,6 +32,9 @@ class MainController extends Controller
                 <a href="' . route('tipeasrama.edit', encrypt($row->id)) . '" class="btn btn-warning fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Edit Tipe Asrama" style="width: 40px;">
                     <i class="fa fa-edit"></i>
                 </a>
+                <a href="' . route('kamar', $row->id) . '" class="btn btn-info fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Lihat Kamar" style="width: 40px;">
+                    <i class="fa fa-eye"></i>
+                </a>
             </div>
             ';
 
@@ -38,6 +42,9 @@ class MainController extends Controller
                 'aksi' => $aksi,
                 'nama' => $row->nama,
                 'jumlah_lantai' => $row->jumlah_lantai,
+                'jumlah_kamar' => Kamar::where('tipe_asrama_id', $row->id)->count(),
+                'jumlah_kapasitas' => Kamar::where('tipe_asrama_id', $row->id)->sum('kapasitas'),
+                'jumlah_penyewa' => Kamar::where('tipe_asrama_id', $row->id)->sum('jumlah_penyewa'),
             ];
         }
 

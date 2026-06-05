@@ -26,6 +26,9 @@
                                     <th scope="col" width="50"></th>
                                     <th scope="col">NAMA</th>
                                     <th scope="col">JUMLAH LANTAI</th>
+                                    <th scope="col">JUMLAH KAMAR</th>
+                                    <th scope="col">JUMLAH KAPASITAS</th>
+                                    <th scope="col">JUMLAH PENYEWA</th>
                                 </tr>
                             </thead>
                         </table>
@@ -57,6 +60,15 @@
                     },
                     {
                         data: "jumlah_lantai",
+                    },
+                    {
+                        data: "jumlah_kamar",
+                    },
+                    {
+                        data: "jumlah_kapasitas",
+                    },
+                    {
+                        data: "jumlah_penyewa",
                     },
                 ],
                 // "order": [
