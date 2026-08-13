@@ -16,7 +16,7 @@
                             @csrf
                             {{-- nama --}}
                             <div class="row mb-3">
-                                <label for="nama" class="col-xl-2 col-form-label fw-bold">Tipe Asrama <sup
+                                <label for="nama" class="col-xl-2 col-form-label fw-bold">Lokasi Asrama <sup
                                         class="text-danger">*</sup></label>
                                 <div class="col-xl-10">
                                     <input type="text" name="nama"

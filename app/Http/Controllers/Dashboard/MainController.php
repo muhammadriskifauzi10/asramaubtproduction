@@ -13,7 +13,6 @@ class MainController extends Controller
 {
     public function index()
     {
-
         if (auth()->user()->role_id == 8) {
             $penyewa = Penyewa::where('nim', auth()->user()->identifier)->first();
 

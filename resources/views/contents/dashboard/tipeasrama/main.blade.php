@@ -29,6 +29,7 @@
                                     <th scope="col">JUMLAH KAMAR</th>
                                     <th scope="col">JUMLAH KAPASITAS</th>
                                     <th scope="col">JUMLAH PENYEWA</th>
+                                    <th scope="col">TERSEDIA</th>
                                 </tr>
                             </thead>
                         </table>
@@ -69,6 +70,9 @@
                     },
                     {
                         data: "jumlah_penyewa",
+                    },
+                    {
+                        data: "tersedia",
                     },
                 ],
                 // "order": [

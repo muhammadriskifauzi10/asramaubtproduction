@@ -18,4 +18,9 @@ class Potonganharga extends Model
         'potongan_harga',
         'operator_id'
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'operator_id');
+    }
 }

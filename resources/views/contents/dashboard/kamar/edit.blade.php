@@ -18,19 +18,13 @@
                             @csrf
                             {{-- token listrik --}}
                             <div class="row mb-3">
-                                <label for="token_listrik" class="col-xl-2 col-form-label fw-bold">Token Listrik <sup
-                                        class="text-danger">*</sup></label>
+                                <label for="token_listrik" class="col-xl-2 col-form-label fw-bold">Token Listrik</label>
                                 <div class="col-xl-10">
                                     <input type="text" name="token_listrik"
-                                        class="form-control @error('token_listrik') is-invalid @enderror"
+                                        class="form-control"
                                         placeholder="Masukkan nomor token listrik"
                                         value="{{ old('token_listrik', $datakamar->token_listrik) }}" id="token_listrik"
                                         autofocus />
-                                    @error('token_listrik')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
                                 </div>
                             </div>
                             {{-- type --}}

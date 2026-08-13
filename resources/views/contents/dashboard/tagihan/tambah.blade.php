@@ -19,7 +19,7 @@
                                 <div class="col-xl-6 mb-3">
                                     <label for="tanggal_masuk" class="form-label fw-bold">Tanggal Masuk <sup
                                             class="text-danger">*</sup></label>
-                                    <input type="date" name="tanggal_masuk"
+                                    <input type="text" name="tanggal_masuk"
                                         class="form-control @error('tanggal_masuk') is-invalid @enderror tanggal_flat"
                                         id="tanggal_masuk" value="{{ old('tanggal_masuk') }}">
                                     @error('tanggal_masuk')
@@ -78,7 +78,8 @@
                                         @foreach (\App\Models\Kamar::whereColumn('jumlah_penyewa', '<', 'kapasitas')->get() as $row)
                                             <option value="{{ $row->id }}"
                                                 {{ old('kamar') == $row->id ? 'selected' : '' }}>
-                                                {{ $row->type->nama ?? '' }} - Kamar {{ $row->nomor_kamar }}
+                                                Lokasi: {{ $row->type->nama ?? '' }} | Lantai: {{ $row->lantai }}
+                                                | Kamar {{ $row->nomor_kamar }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -97,7 +98,6 @@
                                     <select name="harga_asrama"
                                         class="form-control form-select-2 @error('harga_asrama') is-invalid @enderror"
                                         id="harga_asrama" style="width: 100%">
-                                        <option value="">Pilih harga asrama</option>
                                         @foreach (\App\Models\Harga::where('tagih_id', 1)->get() as $row)
                                             <option value="{{ $row->id }}"
                                                 {{ old('harga_asrama') == $row->id ? 'selected' : '' }}>
@@ -132,14 +132,13 @@
                                 </div>
                             </div>
                             {{-- catering --}}
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-xl-6 mb-3">
                                     <label class="form-label fw-bold">
                                         Catering? <sup class="text-danger">*</sup>
                                     </label>
 
                                     <div>
-                                        {{-- YA --}}
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input @error('catering') is-invalid @enderror"
                                                 type="radio" name="catering" id="catering_y" value="Y"
@@ -147,7 +146,6 @@
                                             <label class="form-check-label" for="catering_y">Ya</label>
                                         </div>
 
-                                        {{-- TIDAK --}}
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input @error('catering') is-invalid @enderror"
                                                 type="radio" name="catering" id="catering_t" value="T"
@@ -162,9 +160,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                {{-- harga catering --}}
+                            </div> --}}
+                            {{-- <div class="row">
                                 <div class="col-xl-6 mb-3">
                                     <label for="harga_catering" class="form-label fw-bold">Harga Catering <sup
                                             class="text-danger">*</sup></label>
@@ -187,7 +184,6 @@
                                         </div>
                                     @enderror
                                 </div>
-                                {{-- potongan harga catering --}}
                                 <div class="col-xl-6 mb-3">
                                     <label for="potongan_harga_catering" class="form-label fw-bold">Potongan Harga
                                         Catering
@@ -205,7 +201,7 @@
                                         </div>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="d-flex align-items-center justify-content-end">
                                 <button type="submit" class="btn btn-success" id="btn-submit">
                                     <i class="fa fa-paper-plane me-1"></i> Simpan
@@ -213,7 +209,7 @@
                             </div>
                         </form>
                     </div>
-                    @include('contents.dashboard.tagihan.menu.list')
+                    {{-- @include('contents.dashboard.tagihan.menu.list') --}}
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Piutang;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Penyewa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -54,6 +55,8 @@ class MainController extends Controller
 
                 'p.total_potongan_harga',
                 'p.total_bayar',
+                'p.status_pembayaran',
+                'p.created_at',
 
                 DB::raw("(
                     MAX(CASE WHEN d.jenissewa = 'asrama' THEN d.jumlah_pembayaran ELSE 0 END) +
@@ -77,6 +80,8 @@ class MainController extends Controller
                 'p.total_tagihan',
                 'p.total_potongan_harga',
                 'p.total_bayar',
+                'p.status_pembayaran',
+                'p.created_at',
             )
             ->orderBy('no_invoice', 'DESC')
             ->get();
@@ -86,7 +91,18 @@ class MainController extends Controller
         foreach ($data as $row) {
             $penyewa = Penyewa::find($row->penyewa_id);
 
-            $hutang = $row->net_omset - $row->total_bayar;
+            $piutang = $row->net_omset - $row->total_bayar;
+
+            $jatuhTempo = Carbon::parse($row->created_at)->addDays(5);
+            if ($row->status_pembayaran == 'pending') {
+                if (now()->greaterThan($jatuhTempo)) {
+                    $jatuh_tempo = 'Terlambat ' . now()->diffInDays($jatuhTempo) . ' hari';
+                } else {
+                    $jatuh_tempo = 'Sisa ' . now()->diffInDays($jatuhTempo) . ' hari';
+                }
+            } else {
+                $jatuh_tempo = '';
+            }
 
             $output[] = [
                 'nomor' => $no++,
@@ -102,7 +118,8 @@ class MainController extends Controller
                 'total_potongan_harga' => 'RP. ' . number_format($row->total_potongan_harga, '0', '.', '.'),
                 'net_omset' => 'RP. ' . number_format($row->net_omset, '0', '.', '.'),
                 'total_bayar' => 'RP. ' . number_format($row->total_bayar, '0', '.', '.'),
-                'piutang' => 'RP. ' . number_format($hutang, '0', '.', '.'),
+                'piutang' => 'RP. ' . number_format($piutang, '0', '.', '.'),
+                'jatuh_tempo' => $jatuh_tempo,
             ];
         }
 

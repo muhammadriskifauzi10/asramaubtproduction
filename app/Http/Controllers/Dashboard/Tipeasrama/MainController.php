@@ -14,7 +14,7 @@ class MainController extends Controller
     public function index()
     {
         $data = [
-            'judul' => 'Tipe Asrama',
+            'judul' => 'Lokasi Asrama',
         ];
 
         return view('contents.dashboard.tipeasrama.main', $data);
@@ -29,7 +29,7 @@ class MainController extends Controller
 
             $aksi = '
             <div class="d-flex align-items-center justify-content-center gap-1">
-                <a href="' . route('tipeasrama.edit', encrypt($row->id)) . '" class="btn btn-warning fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Edit Tipe Asrama" style="width: 40px;">
+                <a href="' . route('tipeasrama.edit', encrypt($row->id)) . '" class="btn btn-warning fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Edit Lokasi Asrama" style="width: 40px;">
                     <i class="fa fa-edit"></i>
                 </a>
                 <a href="' . route('kamar', $row->id) . '" class="btn btn-info fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Lihat Kamar" style="width: 40px;">
@@ -38,13 +38,16 @@ class MainController extends Controller
             </div>
             ';
 
+            $jumlah_kapasitas = Kamar::where('tipe_asrama_id', $row->id)->sum('kapasitas');
+            $jumlah_penyewa = Kamar::where('tipe_asrama_id', $row->id)->sum('jumlah_penyewa');
             $output[] = [
                 'aksi' => $aksi,
                 'nama' => $row->nama,
                 'jumlah_lantai' => $row->jumlah_lantai,
                 'jumlah_kamar' => Kamar::where('tipe_asrama_id', $row->id)->count(),
-                'jumlah_kapasitas' => Kamar::where('tipe_asrama_id', $row->id)->sum('kapasitas'),
-                'jumlah_penyewa' => Kamar::where('tipe_asrama_id', $row->id)->sum('jumlah_penyewa'),
+                'jumlah_kapasitas' => $jumlah_kapasitas,
+                'jumlah_penyewa' => $jumlah_penyewa,
+                'tersedia' => $jumlah_kapasitas - $jumlah_penyewa,
             ];
         }
 
@@ -55,7 +58,7 @@ class MainController extends Controller
     public function tambah()
     {
         $data = [
-            'judul' => 'Tambah Tipe Asrama',
+            'judul' => 'Tambah Lokasi Asrama',
         ];
 
         return view('contents.dashboard.tipeasrama.tambah', $data);
@@ -105,7 +108,7 @@ class MainController extends Controller
         $tipeasrama = Tipeasrama::findorfail($id);
 
         $data = [
-            'judul' => 'Edit Tipe Asrama',
+            'judul' => 'Edit Lokasi Asrama',
             'datatipeasrama' => $tipeasrama
         ];
 

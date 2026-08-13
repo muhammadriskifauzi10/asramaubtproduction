@@ -5,39 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaksi extends Model
+class Requesttransaksi extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksi';
+    protected $table = 'request_transaksi';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'parent_id',
-        'no_invoice',
-        'nim',
+        'no_request',
         'no_transaksi',
         'tanggal_transaksi',
         'jumlah_uang',
         'metode_pembayaran',
         'file_bukti',
-        'jenis_transaksi',
         'operator_id'
     ];
-
-    public function penyewa()
-    {
-        return $this->hasOne(Penyewa::class, 'nim', 'nim');
-    }
 
     public function tagihan()
     {
         return $this->hasOne(Pembayaran::class, 'no_invoice', 'no_invoice');
-    }
-
-    public function parent()
-    {
-        return $this->hasOne(Transaksi::class, 'id', 'parent_id');
     }
 
     public function user()

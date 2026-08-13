@@ -133,7 +133,7 @@
         <div class="header">
             <img src="{{ public_path('images/ubt-logo.webp') }}" alt="Logo UBT">
             <h1>UNIVERSITAS BUNDA THAMRIN</h1>
-            <h2>KWITANSI</h2>
+            <h2>KWITANSI DEPOSIT</h2>
         </div>
 
         <div class="dashed"></div>
@@ -146,49 +146,36 @@
             </tr>
             <tr>
                 <td>Nama Mahasiswa</td>
-                <td>: {{ $tagihan->penyewa->namalengkap }}</td>
+                <td>: {{ $transaksi->penyewa->namalengkap }}</td>
             </tr>
             <tr>
                 <td>NIM</td>
-                <td>: {{ $tagihan->penyewa->nim }}</td>
+                <td>: {{ $transaksi->penyewa->nim }}</td>
             </tr>
             <tr>
                 <td>Tahun Akademik</td>
-                <td>: {{ $tagihan->penyewa->angkatan }}</td>
+                <td>: {{ $transaksi->penyewa->angkatan }}</td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td>Periode</td>
                 <td>: {{ \Carbon\Carbon::parse($tagihan->tanggal_masuk)->format('d-m-Y') }} -
                     {{ \Carbon\Carbon::parse($tagihan->tanggal_keluar)->format('d-m-Y') }}</td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td>Tanggal</td>
                 <td>: {{ \Carbon\Carbon::parse($transaksi->created_at)->format('d-m-Y') }}</td>
             </tr>
             <tr>
                 <td>Keterangan</td>
-                <td>: Pembayaran No. Tagihan {{ $transaksi->no_invoice }}</td>
+                <td>: Pembayaran No. Deposit {{ $transaksi->no_transaksi }}</td>
             </tr>
         </table>
 
         {{-- JUMLAH --}}
         <div class="amount-box">
-            @php
-                $refund = \App\Models\Transaksi::where('parent_id', $transaksi->id)->sum('jumlah_uang');
-
-                $sisa_uang_transaksi = $transaksi->jumlah_uang + $refund;
-            @endphp
             Total Bayar
             <div class="total">
                 Rp {{ number_format($transaksi->jumlah_uang, 0, ',', '.') }}
-            </div>
-            Refund:
-            <div class="total">
-                Rp {{ number_format($refund, 0, ',', '.') }}
-            </div>
-            NET Total Bayar
-            <div class="total">
-                Rp {{ number_format($sisa_uang_transaksi, 0, ',', '.') }}
             </div>
         </div>
 

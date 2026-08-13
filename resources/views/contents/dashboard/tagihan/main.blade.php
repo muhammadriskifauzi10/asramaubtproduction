@@ -36,9 +36,9 @@
                         <select class="form-select form-select-2" name="status_pembayaran" id="status_pembayaran"
                             style="width: 100%;">
                             <option value="">Filter Status Pembayaran</option>
-                            <option value="failed">Failed</option>
-                            <option value="pending" selected>Pending</option>
-                            <option value="completed">Completed</option>
+                            <option value="failed">Batal</option>
+                            <option value="pending" selected>Belum Lunas</option>
+                            <option value="completed">Lunas</option>
                         </select>
                     </div>
                 </div>
@@ -60,6 +60,8 @@
                             <thead class="bg-dark text-light">
                                 <tr>
                                     <th scope="col" width="50"></th>
+                                    <th scope="col">TANGGAL DIBUAT</th>
+                                    <th scope="col">JATUH TEMPO</th>
                                     <th scope="col">NAMA</th>
                                     <th scope="col">NIM</th>
                                     <th scope="col">BILL TO</th>
@@ -90,7 +92,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Kwitansi Pembayaran</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
                     <iframe id="iframeCetakKwitansi" src="" width="100%" height="600px"
@@ -122,6 +124,12 @@
                 },
                 columns: [{
                         data: "aksi",
+                    },
+                    {
+                        data: "tanggal_dibuat",
+                    },
+                    {
+                        data: "jatuh_tempo",
                     },
                     {
                         data: "nama",
@@ -224,28 +232,61 @@
             table.ajax.reload()
         }
 
-        async function openModalPay(no_invoice) {
-            // ambil data bank dari API
+        async function openModalPay(nim, no_invoice, total_tagihan) {
+            $("#universalModalContent").addClass("modal-lg")
+            // // ambil data bank dari API
+            // let banks = [];
+            // try {
+            //     let res = await fetch('https://sia.ubtsu.ac.id/api/bank');
+            //     banks = await res.json();
+            // } catch (error) {
+            //     console.error('Gagal ambil data bank:', error);
+            // }
+
+            // const priorityId = 3;
+            // banks.sort((a, b) => {
+            //     if (a.id === priorityId) return -1;
+            //     if (b.id === priorityId) return 1;
+            //     return 0;
+            // });
+
+            // let bankOptions = '';
+
+            // metode pembayaran
+            const defaultBankId = 2;
             let banks = [];
+
             try {
-                let res = await fetch('https://sia.ubtsu.ac.id/api/bank');
+                const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
                 banks = await res.json();
+
+                // Hanya tampilkan bank id = 2
+                banks = banks.filter(bank => bank.id == 2);
+
             } catch (error) {
                 console.error('Gagal ambil data bank:', error);
+
+                $("#bank-list").html(`
+                    <div class="alert alert-danger mb-0">
+                        Gagal memuat daftar bank.
+                    </div>
+                `);
+
+                return;
             }
 
-            const priorityId = 3;
-            banks.sort((a, b) => {
-                if (a.id === priorityId) return -1;
-                if (b.id === priorityId) return 1;
-                return 0;
-            });
-
-            let bankOptions = '';
-
-            const defaultBankId = 3;
+            let bankOptions = "";
             banks.forEach((bank) => {
                 bankOptions += `
+                    <div class="form-check mb-3">
+                        <input type="radio"
+                            name="metode_pembayaran"
+                            id="metode_pembayaran_0"
+                            value="Cash" checked>
+                        <label class="form-check-label" for="metode_pembayaran_0">
+                            Cash
+                        </label>
+                    </div>
                     <div class="form-check">
                         <input type="radio"
                             name="metode_pembayaran"
@@ -261,56 +302,139 @@
                 `;
             });
 
+            // deposit
+            let depositOptions = `<option value="">Pilih Deposit</option>`;
+            try {
+                const response = await $.ajax({
+                    url: `/deposit/get/${nim}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                response.forEach(item => {
+                    depositOptions += `
+                        <option value="${item.id}" data-saldo="${item.saldo}">
+                            No Kuitansi ${item.no_transaksi} | Saldo: Rp ${Number(item.saldo).toLocaleString('id-ID')}
+                        </option>
+                    `;
+                });
+            } catch (xhr) {
+                console.error(xhr.status);
+                console.error(xhr.responseText);
+            }
+
             $("#universalModalContent").html(`
-                <form class="modal-content" autocomplete="off" onsubmit="requestBayar(event)" id="formbayar" enctype="multipart/formdata">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Bayar No Invoice: ${no_invoice}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
+            <form class="modal-content" autocomplete="off" onsubmit="requestBayar(event)" id="formbayar" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="mb-3">
+                        <tbody>
+                            <tr>
+                                <td>NO INVOICE</td>
+                                <td width="20" class="text-right">:</td>
+                                <td>${no_invoice}</td>
+                            </tr>
+                            <tr>
+                                <td>TOTAL PIUTANG</td>
+                                <td width="20" class="text-right">:</td>
+                                <td>
+                                    RP. ${Number(total_tagihan).toLocaleString('id-ID')}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <input type="hidden" name="no_invoice" value="${no_invoice}">
 
-                    <div class="modal-body">
-                        <input type="hidden" name="no_invoice" value="${no_invoice}">
-                        <div class="mb-3">
-                            <label for="tanggal_bayar" class="form-label fw-bold">Tanggal Bayar <sup class="text-danger">*</sup></label>
-                            <input type="date" name="tanggal_bayar" id="tanggal_bayar" class="form-control tanggal_flat">
-                        </div>
-                        <div class="mb-3">
-                            <label for="jumlah_uang" class="form-label fw-bold">Jumlah Uang <sup
-                                    class="text-danger">*</sup></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-success text-light">RP</span>
-
-                                <input type="text" name="jumlah_uang" id="jumlah_uang"
-                                    class="form-control text-end bg-warning fw-bold"
-                                    value="0">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="file_bukti" class="form-label fw-bold">File Bukti <sup class="text-danger">* (PDF, JPG, JPEG, PNG)</sup></label>
-                            <input type="file" name="file_bukti" id="file_bukti" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                Metode Pembayaran <sup class="text-danger">*</sup>
-                            </label>
-
-                            <div id="bank-list">
-                                ${bankOptions}
-                            </div>
-                        </div>
-
-                       <div class="d-flex align-items-center justify-content-end">
-                            <button type="submit" class="btn btn-success" id="btn-submit">
-                                <i class="fa fa-paper-plane me-1"></i> Simpan
+                    <ul class="nav nav-tabs mb-3" id="paymentTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active"
+                                id="pembayaran-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#pembayaran"
+                                type="button"
+                                role="tab">
+                                Pembayaran
                             </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                id="deposit-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#deposit-tab-pane"
+                                type="button"
+                                role="tab">
+                                Deposit
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="pembayaran" role="tabpanel">
+                            <div class="mb-3">
+                                <label for="tanggal_bayar" class="form-label fw-bold">Tanggal Referensi Bayar <sup class="text-danger">*</sup></label>
+                                <input type="text" name="tanggal_bayar" id="tanggal_bayar" class="form-control tanggal_flat">
+                            </div>
+                            <div class="mb-3">
+                                <label for="jumlah_uang" class="form-label fw-bold">Jumlah Uang <sup class="text-danger">*</sup></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-light">RP</span>
+
+                                    <input type="text" name="jumlah_uang" id="jumlah_uang"
+                                        class="form-control text-end bg-warning fw-bold"
+                                        value="0">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="file_bukti" class="form-label fw-bold">File Bukti <sup class="text-danger">(PDF, JPG, JPEG, PNG)</sup></label>
+                                <input type="file" name="file_bukti" id="file_bukti" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    Metode Pembayaran <sup class="text-danger">*</sup>
+                                </label>
+
+                                <div id="bank-list">
+                                    ${bankOptions}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-end">
+                                <button type="submit" class="btn btn-success" id="btn-submit">
+                                    <i class="fa fa-paper-plane me-1"></i> Simpan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="deposit-tab-pane" role="tabpanel">
+                            <div>
+                                <label for="deposit" class="form-label fw-bold">Deposit</label>
+                                <div class="input-group">
+                                    <select class="form-select" name="deposit" id="deposit">
+                                        ${depositOptions}
+                                    </select>
+
+                                    <button type="button" class="btn btn-primary" onclick="btnGunakanDeposit(${nim},
+                                    '${no_invoice}')">
+                                        <i class="fa fa-check me-1"></i> Gunakan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
+            </form>
             `);
 
             flatpickr(".tanggal_flat", {
                 enableTime: true,
                 dateFormat: "d/m/Y H:i",
+                maxDate: "today"
             });
 
             new AutoNumeric('#jumlah_uang', {
@@ -344,7 +468,7 @@
 
             // validasi tanggal bayar
             if (tanggal_bayar == '') {
-                $('#tanggal_bayar').addClass('is-invalid');
+                $('.tanggal_flat').addClass('is-invalid');
                 isValid = false;
             }
 
@@ -354,11 +478,7 @@
                 isValid = false;
             }
 
-            // validasi file
-            if (!file_bukti) {
-                $('#file_bukti').addClass('is-invalid');
-                isValid = false;
-            } else {
+            if (file_bukti) {
                 let allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
                 let fileName = file_bukti.name.toLowerCase();
                 let fileExtension = fileName.split('.').pop();
@@ -378,7 +498,7 @@
             if (!isValid) {
                 Swal.fire({
                     icon: "warning",
-                    text: "Harap isi semua field sebelum menyimpan data!"
+                    text: "Harap isi field sebelum menyimpan data!"
                 });
                 return;
             }
@@ -440,6 +560,82 @@
                     `).prop("disabled", false);
                 }
             });
+        }
+
+        function btnGunakanDeposit(nim, no_invoice) {
+            if ($("#deposit").val()) {
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: `Apakah Anda benar-benar ingin menggunakan deposit ini?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, gunakan!',
+                    cancelButtonText: 'Batal',
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    width: '700px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // tampilkan loading saat proses pengiriman berlangsung
+                        Swal.fire({
+                            title: 'Sedang memproses...',
+                            text: 'Mohon tunggu, sistem sedang memproses',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            width: '700px',
+                            didOpen: () => {
+                                Swal.showLoading(); // animasi spinner loading
+                            }
+                        });
+
+                        const formData = new FormData();
+                        formData.append('_token', '{{ csrf_token() }}');
+                        formData.append('nim', nim);
+                        formData.append('no_invoice', no_invoice);
+                        formData.append('deposit_id', $("#deposit").val());
+
+                        $.ajax({
+                            url: '{{ route('deposit.use') }}',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                Swal.close(); // tutup loading
+                                if (response.status == 200) {
+                                    Swal.fire({
+                                        title: "Berhasil 🚀",
+                                        html: response.message,
+                                        icon: response.icon,
+                                        timer: 5000,
+                                        showConfirmButton: false
+                                    });
+
+                                    $("#universalModal").modal("hide");
+
+                                    table.ajax.reload()
+                                } else {
+                                    Swal.fire({
+                                        title: "Gagal",
+                                        text: response.message,
+                                        icon: response.icon
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.close(); // tutup loading jika error
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "Terjadi kesalahan saat mengirim pesan. Coba lagi nanti.",
+                                    icon: "error"
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         }
     </script>
 @endpush

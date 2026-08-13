@@ -18,7 +18,7 @@
                             @csrf
                             {{-- nama --}}
                             <div class="row mb-3">
-                                <label for="nama" class="col-xl-2 col-form-label fw-bold">Tipe Asrama <sup
+                                <label for="nama" class="col-xl-2 col-form-label fw-bold">Lokasi Asrama <sup
                                         class="text-danger">*</sup></label>
                                 <div class="col-xl-10">
                                     <input type="text" name="nama"
@@ -39,7 +39,8 @@
                                 <div class="col-xl-10">
                                     <input type="number" name="jumlah_lantai"
                                         class="form-control @error('jumlah_lantai') is-invalid @enderror"
-                                        placeholder="Masukkan jumlah lantai" value="{{ old('jumlah_lantai', $datatipeasrama->jumlah_lantai) }}"
+                                        placeholder="Masukkan jumlah lantai"
+                                        value="{{ old('jumlah_lantai', $datatipeasrama->jumlah_lantai) }}"
                                         id="jumlah_lantai" autofocus />
                                     @error('jumlah_lantai')
                                         <div class="invalid-feedback">

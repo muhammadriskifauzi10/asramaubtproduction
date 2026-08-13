@@ -35,7 +35,6 @@ class MainController extends Controller
         })->orderby('angkatan', 'DESC')->get();
 
         $output = [];
-        $no = 1;
         foreach ($penyewa as $row) {
 
             // asrama
@@ -165,7 +164,6 @@ class MainController extends Controller
     {
         if (request()->all()) {
             $id = request()->input('id');
-
             try {
                 DB::beginTransaction();
 
@@ -197,36 +195,36 @@ class MainController extends Controller
             }
         }
     }
-    public function hentikancatering()
-    {
-        if (request()->all()) {
-            $id = request()->input('id');
+    // public function hentikancatering()
+    // {
+    //     if (request()->all()) {
+    //         $id = request()->input('id');
 
-            try {
-                DB::beginTransaction();
+    //         try {
+    //             DB::beginTransaction();
 
-                Penyewa::where('id', $id)->update([
-                    'status_catering' => 0
-                ]);
+    //             Penyewa::where('id', $id)->update([
+    //                 'status_catering' => 0
+    //             ]);
 
-                Pembayaran::where('penyewa_id', $id)->update([
-                    'status_catering' => 0
-                ]);
+    //             Pembayaran::where('penyewa_id', $id)->update([
+    //                 'status_catering' => 0
+    //             ]);
 
-                DB::commit();
-                return response()->json([
-                    'status'  => 200,
-                    'message'  => 'Berhasil hentikan catering!',
-                    'icon' => 'success'
-                ]);
-            } catch (Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => 500,
-                    'message' => $e->getMessage(),
-                    'icon' => 'error'
-                ]);
-            }
-        }
-    }
+    //             DB::commit();
+    //             return response()->json([
+    //                 'status'  => 200,
+    //                 'message'  => 'Berhasil hentikan catering!',
+    //                 'icon' => 'success'
+    //             ]);
+    //         } catch (Exception $e) {
+    //             DB::rollBack();
+    //             return response()->json([
+    //                 'status' => 500,
+    //                 'message' => $e->getMessage(),
+    //                 'icon' => 'error'
+    //             ]);
+    //         }
+    //     }
+    // }
 }

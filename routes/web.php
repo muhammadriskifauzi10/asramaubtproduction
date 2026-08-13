@@ -1,15 +1,21 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Dashboard\Deposit\MainController as DepositMainController;
 use App\Http\Controllers\Dashboard\Harga\MainController as HargaMainController;
 use App\Http\Controllers\Dashboard\MainController;
 use App\Http\Controllers\Dashboard\Kamar\MainController as KamarMainController;
 use App\Http\Controllers\Dashboard\Lantai\MainController as LantaiMainController;
 use App\Http\Controllers\Dashboard\Omset\MainController as OmsetMainController;
 use App\Http\Controllers\Dashboard\Pengguna\MainController as PenggunaMainController;
+use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Permintaan\MainController as PenggunapermintankamarMainController;
+use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Verifikasi\MainController as PenggunaverifikasipermintaankamarMainController;
+use App\Http\Controllers\Dashboard\Pengguna\Tagihan\MainController as PenggunaTagihanMainController;
 use App\Http\Controllers\Dashboard\Penyewa\MainController as PenyewaMainController;
 use App\Http\Controllers\Dashboard\Perpanjang\MainController as PerpanjangMainController;
 use App\Http\Controllers\Dashboard\Piutang\MainController as PiutangMainController;
+use App\Http\Controllers\Dashboard\Requestkamar\Permintaan\MainController as RequestpermintaankamarMainController;
+use App\Http\Controllers\Dashboard\Requestkamar\Verifikasi\MainController as RequestverifikasipermintaankamarMainController;
 use App\Http\Controllers\Dashboard\Transaksi\MainController as TransaksiMainController;
 use App\Http\Controllers\Dashboard\Role\MainController as RoleMainController;
 use App\Http\Controllers\Dashboard\Tagih\MainController as TagihMainController;
@@ -73,8 +79,8 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/tagihan/potongan_harga', [TagihanMainController::class, 'potongan_harga'])->name('tagihan.potongan_harga');
     Route::get('/tagihan/tambah', [TagihanMainController::class, 'tambah'])->name('tagihan.tambah');
     Route::post('/tagihan/tambah', [TagihanMainController::class, 'create'])->name('tagihan.posttagihan');
-    Route::get('/tagihan/tambah/catering', [TagihanMainController::class, 'tambahcatering'])->name('tagihan.tambah.catering');
-    Route::post('/tagihan/tambah/catering', [TagihanMainController::class, 'postcatering'])->name('tagihan.tambah.postcatering');
+    // Route::get('/tagihan/tambah/catering', [TagihanMainController::class, 'tambahcatering'])->name('tagihan.tambah.catering');
+    // Route::post('/tagihan/tambah/catering', [TagihanMainController::class, 'postcatering'])->name('tagihan.tambah.postcatering');
     Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
 
     // perpanjang
@@ -82,10 +88,34 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/perpanjang/datatableperpanjang', [PerpanjangMainController::class, 'datatableperpanjang'])->name('perpanjang.datatableperpanjang');
     Route::post('/perpanjang/perpanjangmassal', [PerpanjangMainController::class, 'perpanjangmassal'])->name('perpanjang.perpanjangmassal');
 
+    // deposit
+    Route::get('/deposit', [DepositMainController::class, 'index'])->name('deposit');
+    Route::post('/deposit/datatabledeposit', [DepositMainController::class, 'datatabledeposit'])->name('deposit.datatabledeposit');
+    Route::get('/deposit/tambah', [DepositMainController::class, 'tambah'])->name('deposit.tambah');
+    Route::post('/deposit/post', [DepositMainController::class, 'create'])->name('deposit.post');
+    Route::get('/deposit/get/{nim}', [DepositMainController::class, 'getbynim'])->name('deposit.getbynim');
+    Route::post('/deposit/use', [DepositMainController::class, 'use'])->name('deposit.use');
+    Route::get('/deposit/kwitansi/{no_transaksi}', [DepositMainController::class, 'kwitansi'])->name('deposit.kwitansi');
+    Route::post('/deposit/refund', [DepositMainController::class, 'refund'])->name('deposit.refund');
+    Route::post('/deposit/movesaldo', [DepositMainController::class, 'movesaldo'])->name('deposit.movesaldo');
+
+
+    // request permintaan
+    Route::get('/permintaankamar', [RequestpermintaankamarMainController::class, 'index'])->name('request.permintaankamar');
+    Route::post('/permintaankamar/datatablepermintaankamar', [RequestpermintaankamarMainController::class, 'datatablepermintaankamar'])->name('request.permintaankamar.datatablepermintaankamar');
+    Route::get('/permintaankamar/tambah/{no_request}', [RequestpermintaankamarMainController::class, 'tambah'])->name('request.permintaankamar.tambah');
+
+    // verifikasi
+    Route::get('/verifikasipermintaankamar', [RequestverifikasipermintaankamarMainController::class, 'index'])->name('request.verifikasipermintaankamar');
+    Route::post('/verifikasipermintaankamar/datatableverifikasipermintaankamar', [RequestverifikasipermintaankamarMainController::class, 'datatableverifikasipermintaankamar'])->name('request.verifikasipermintaankamar.datatableverifikasipermintaankamar');
+
     // transaksi
     Route::get('/transaksi', [TransaksiMainController::class, 'index'])->name('transaksi');
+    Route::post('/transaksi/detail', [TransaksiMainController::class, 'detail'])->name('transaksi.detail');
     Route::post('/transaksi/datatabletransaksi', [TransaksiMainController::class, 'datatabletransaksi'])->name('transaksi.datatabletransaksi');
     Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
+    Route::get('/transaksi/refundkwitansi/{no_invoice}', [TransaksiMainController::class, 'refundkwitansi'])->name('transaksi.refundkwitansi');
+    Route::post('/transaksi/refund', [TransaksiMainController::class, 'refund'])->name('transaksi.refund');
 
     // omset
     Route::get('/omset', [OmsetMainController::class, 'index'])->name('omset');
@@ -119,6 +149,7 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/tipeasrama/kamar/tambah', [KamarMainController::class, 'create'])->name('kamar.post');
     Route::get('/tipeasrama/kamar/edit/{id}', [KamarMainController::class, 'edit'])->name('kamar.edit');
     Route::put('/tipeasrama/kamar/edit/{id}', [KamarMainController::class, 'update'])->name('kamar.update');
+    Route::post('/tipeasrama/kamar/getpenyewa', [KamarMainController::class, 'getpenyewa'])->name('kamar.getpenyewa');
 
     // harga
     Route::get('/harga', [HargaMainController::class, 'index'])->name('harga');
@@ -160,4 +191,16 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/pengguna/datatablepengguna', [PenggunaMainController::class, 'datatablepengguna'])->name('pengguna.datatablepengguna');
     Route::post('/pengguna/editrole', [PenggunaMainController::class, 'editrole'])->name('pengguna.editrole');
     Route::post('/pengguna/status', [PenggunaMainController::class, 'status'])->name('pengguna.status');
+
+    // tagihan request
+    Route::get('/pengguna/tagihan/tambah', [PenggunaTagihanMainController::class, 'index'])->name('pengguna.tagihan.tambah');
+    Route::post('/pengguna/tagihan/tambah', [PenggunaTagihanMainController::class, 'create'])->name('pengguna.tagihan.posttagihan');
+
+    // request
+    Route::get('/pengguna/permintaankamar/{penyewa_id}', [PenggunapermintankamarMainController::class, 'index'])->name('pengguna.permintaankamar');
+    Route::post('/pengguna/permintaankamar/datatablepermintaankamar', [PenggunapermintankamarMainController::class, 'datatablepermintaankamar'])->name('pengguna.permintaankamar.datatablepermintaankamar');
+
+    // verifikasi permintaan kamar
+    Route::get('/pengguna/verifikasipermintaankamar/{penyewa_id}', [PenggunaverifikasipermintaankamarMainController::class, 'index'])->name('pengguna.verifikasipermintaankamar');
+    Route::post('/pengguna/verifikasipermintaankamar/datatableverifikasipermintaankamar', [PenggunaverifikasipermintaankamarMainController::class, 'datatableverifikasipermintaankamar'])->name('pengguna.verifikasipermintaankamar.datatableverifikasipermintaankamar');
 });

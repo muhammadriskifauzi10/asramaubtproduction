@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Kamar;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\Lantai;
+use App\Models\Pembayaran;
 use App\Models\Tipeasrama;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -18,9 +19,11 @@ class MainController extends Controller
             abort(404);
         }
 
+        $tipeasrama = Tipeasrama::where('id', $id)->first();
+
         $data = [
             'judul' => 'Kamar',
-            'tipeasrama' => $id
+            'tipeasrama' => $tipeasrama
         ];
 
         return view('contents.dashboard.kamar.main', $data);
@@ -52,7 +55,12 @@ class MainController extends Controller
                 'lantai' => $row->lantai,
                 'nomor_kamar' => $row->nomor_kamar,
                 'kapasitas' => $row->kapasitas,
-                'jumlah_penyewa' => $row->jumlah_penyewa
+                'jumlah_penyewa' => '<button
+                    class="btn btn-link p-0 lihat-penyewa"
+                    data-id="' . $row->id . '">
+                    ' . $row->jumlah_penyewa . '
+                </button>',
+                'tersedia' => $row->kapasitas - $row->jumlah_penyewa,
             ];
         }
 
@@ -176,13 +184,6 @@ class MainController extends Controller
                     }
                 },
             ],
-            'lantai' => [
-                function ($attribute, $value, $fail) {
-                    if (!Lantai::where('id', (int)$value)->exists()) {
-                        $fail('Kolom ini wajib dipilih');
-                    }
-                },
-            ],
             'nomor_kamar' => ['required'],
             'nomor_kamar' => $rule_nomor_kamar,
             'kapasitas' => ['required', 'integer'],
@@ -215,10 +216,83 @@ class MainController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('tipeasrama')->with('messageSuccess', 'Kamar berhasil diperbarui!');
+            return redirect()->route('kamar', $tipeasrama)->with('messageSuccess', 'Kamar berhasil diperbarui!');
         } catch (Exception $e) {
             DB::rollBack();
             echo $e->getMessage();
+        }
+    }
+    public function getpenyewa()
+    {
+        if (request()->ajax()) {
+            $kamar_id = request()->input('kamar_id');
+
+            $latestIds = Pembayaran::where('kamar_id', $kamar_id)
+                ->where('status_asrama', 1)
+                ->selectRaw('MAX(id) as id')
+                ->groupBy('penyewa_id')
+                ->pluck('id');
+
+            $penyewa = Pembayaran::whereIn('id', $latestIds)
+                ->latest('id')
+                ->get();
+            // $penyewa = Pembayaran::where('kamar_id', $kamar_id)
+            //     ->where('status_asrama', 1)
+            //     ->orderBy('id', 'ASC')
+            //     ->get();
+
+            $tbody = [];
+            if ($penyewa->count() > 0) {
+                $no = 1;
+                foreach ($penyewa as $row) {
+                    $tbody[] = '
+                    <tr>
+                        <td>' . $no++ . '</td>
+                        <td>' . $row->penyewa->namalengkap . '</td>
+                        <td>' . $row->penyewa->nim . '</td>
+                        <td>' . ($row->penyewa->jenis_kelamin == "L" ? "Laki-Laki" : "Perempuan") . '</td>
+                        <td>' . $row->penyewa->nama_bill_to . '</td>
+                    </tr>
+                    ';
+                }
+            } else {
+                $tbody[] = '
+                    <tr>
+                        <td class="text-center" colspan="5">Daftar Penyewa Tidak Ada</td>
+                    </tr>
+                    ';
+            }
+
+            $dataHTML = '
+            <div class="modal-content" autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title">Daftar Penyewa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table"style="width: 100%">
+                        <thead class="bg-dark text-light">
+                            <tr>
+                                <th scope="col" width="50">NO</th>
+                                <th scope="col">NAMA PENYEWA</th>
+                                <th scope="col">NIM</th>
+                                <th scope="col">JENIS KELAMIN</th>
+                                <th scope="col">BILL TO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ' . implode('', $tbody) . '
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            ';
+
+            return response()->json([
+                'status' => 200,
+                'dataHTML' => $dataHTML
+            ]);
         }
     }
 }

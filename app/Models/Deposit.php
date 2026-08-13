@@ -5,39 +5,37 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaksi extends Model
+class Deposit extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksi';
+    protected $table = 'deposit';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'parent_id',
-        'no_invoice',
         'nim',
         'no_transaksi',
         'tanggal_transaksi',
         'jumlah_uang',
+        'saldo',
         'metode_pembayaran',
-        'file_bukti',
-        'jenis_transaksi',
-        'operator_id'
+        'status',
+        'operator_id',
     ];
+
+    public function pembayaran()
+    {
+        return $this->hasMany(Depositpembayaran::class, 'deposit_id');
+    }
+
+    public function refund()
+    {
+        return $this->hasMany(Depositrefund::class, 'deposit_id');
+    }
 
     public function penyewa()
     {
         return $this->hasOne(Penyewa::class, 'nim', 'nim');
-    }
-
-    public function tagihan()
-    {
-        return $this->hasOne(Pembayaran::class, 'no_invoice', 'no_invoice');
-    }
-
-    public function parent()
-    {
-        return $this->hasOne(Transaksi::class, 'id', 'parent_id');
     }
 
     public function user()

@@ -159,7 +159,7 @@
             <tr>
                 <td>Periode</td>
                 <td>: {{ \Carbon\Carbon::parse($tagihan->tanggal_masuk)->format('d-m-Y') }} -
-                    {{ \Carbon\Carbon::parse($tagihan->keluar)->format('d-m-Y') }}</td>
+                    {{ \Carbon\Carbon::parse($tagihan->tanggal_keluar)->format('d-m-Y') }}</td>
             </tr>
             <tr>
                 <td>Tanggal Tagihan</td>
