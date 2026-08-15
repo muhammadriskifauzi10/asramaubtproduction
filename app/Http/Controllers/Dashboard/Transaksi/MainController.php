@@ -177,7 +177,7 @@ class MainController extends Controller
                     </div>
                     ';
                 } else {
-                    $depositpembayaran = Depositpembayaran::where('deposit_id', $deposit->id)->get();
+                    $depositpembayaran = Depositpembayaran::where('deposit_id', $deposit->id)->where('jenis_pembayaran', 'Penggunaan')->get();
 
                     $tbodydeposit = [];
                     if ($depositpembayaran->count() > 0) {
