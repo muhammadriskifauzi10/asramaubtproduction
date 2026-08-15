@@ -199,9 +199,23 @@
 
         {{-- JUMLAH --}}
         <div class="amount-box">
-            Total Tagihan
+            @php
+                $net_tagihan = $tagihan->total_tagihan - $tagihan->total_potongan_harga;
+                $piutang = $tagihan->total_tagihan - $tagihan->total_potongan_harga - $tagihan->total_bayar;
+            @endphp
+            Net Tagihan
             <div class="total">
-                Rp {{ number_format($tagihan->total_tagihan - $tagihan->total_potongan_harga, 0, ',', '.') }}
+                Rp
+                {{ number_format($net_tagihan, 0, ',', '.') }}
+            </div>
+            Total Bayar
+            <div class="total">
+                Rp
+                {{ number_format($tagihan->total_bayar, 0, ',', '.') }}
+            </div>
+            Piutang
+            <div class="total">
+                Rp {{ number_format($piutang, 0, ',', '.') }}
             </div>
         </div>
 

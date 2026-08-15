@@ -1,5 +1,50 @@
 @extends('layouts.main')
 
+@section('mystyles')
+    <style>
+        input[name="metode_pembayaran"] {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+
+            border: 2px solid var(--bs-secondary-color);
+            border-radius: 50%;
+
+            vertical-align: middle;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Belum dipilih + validasi gagal */
+        input[name="metode_pembayaran"].is-invalid {
+            border-color: var(--bs-danger);
+        }
+
+        /* Dipilih */
+        input[name="metode_pembayaran"]:checked {
+            border-color: var(--bs-primary);
+        }
+
+        /* Titik tengah */
+        input[name="metode_pembayaran"]:checked::after {
+            content: "";
+            position: absolute;
+
+            width: 8px;
+            height: 8px;
+
+            background-color: var(--bs-primary);
+            border-radius: 50%;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+@endsection
+
 @section('contents')
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
@@ -282,7 +327,7 @@
                         <input type="radio"
                             name="metode_pembayaran"
                             id="metode_pembayaran_0"
-                            value="Cash" checked>
+                            value="Cash">
                         <label class="form-check-label" for="metode_pembayaran_0">
                             Cash
                         </label>
@@ -291,8 +336,7 @@
                         <input type="radio"
                             name="metode_pembayaran"
                             id="metode_pembayaran_${bank.id}"
-                            value="${bank.name} - ${bank.account_name}"
-                            ${bank.id === defaultBankId ? 'checked' : ''}>
+                            value="${bank.name} - ${bank.account_name}">
                         <label class="form-check-label" for="metode_pembayaran_${bank.id}">
                             ${bank.name} - ${bank.account_number}
                             <br>
@@ -459,12 +503,15 @@
             let fileInput = $('#file_bukti')[0];
             let file_bukti = fileInput.files[0];
 
+            let metode_pembayaran = $("input[name='metode_pembayaran']:checked");
+
             let isValid = true;
 
             // reset error dulu
             $('#tanggal_bayar').removeClass('is-invalid');
             $('#jumlah_uang').removeClass('is-invalid');
             $('#file_bukti').removeClass('is-invalid');
+            $("input[name='metode_pembayaran']").removeClass('is-invalid');
 
             // validasi tanggal bayar
             if (tanggal_bayar == '') {
@@ -493,6 +540,12 @@
                     $('#file_bukti').addClass('is-invalid');
                     return;
                 }
+            }
+
+            // validasi metode pembayaran
+            if (metode_pembayaran.length === 0) {
+                $("input[name='metode_pembayaran']").addClass('is-invalid');
+                isValid = false;
             }
 
             if (!isValid) {

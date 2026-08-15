@@ -1,5 +1,50 @@
 @extends('layouts.main')
 
+@section('mystyles')
+    <style>
+        input[name="metode_pembayaran"] {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+
+            border: 2px solid var(--bs-secondary-color);
+            border-radius: 50%;
+
+            vertical-align: middle;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Belum dipilih + validasi gagal */
+        input[name="metode_pembayaran"].is-invalid {
+            border-color: var(--bs-danger);
+        }
+
+        /* Dipilih */
+        input[name="metode_pembayaran"]:checked {
+            border-color: var(--bs-primary);
+        }
+
+        /* Titik tengah */
+        input[name="metode_pembayaran"]:checked::after {
+            content: "";
+            position: absolute;
+
+            width: 8px;
+            height: 8px;
+
+            background-color: var(--bs-primary);
+            border-radius: 50%;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+@endsection
+
 @section('contents')
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
@@ -211,7 +256,7 @@
                         <input type="radio"
                             name="metode_pembayaran"
                             id="metode_pembayaran_0"
-                            value="Cash" checked>
+                            value="Cash">
                         <label class="form-check-label" for="metode_pembayaran_0">
                             Cash
                         </label>
@@ -296,11 +341,14 @@
             // hapus titik (format rupiah)
             let jumlah_uang = parseInt(jumlah_uang_raw.replace(/\./g, '')) || 0;
 
+            let metode_pembayaran = $("input[name='metode_pembayaran']:checked");
+
             let isValid = true;
 
             // reset error dulu
             $('#tanggal_bayar').removeClass('is-invalid');
             $('#jumlah_uang').removeClass('is-invalid');
+            $("input[name='metode_pembayaran']").removeClass('is-invalid');
 
             // validasi tanggal bayar
             if (tanggal_bayar == '') {
@@ -311,6 +359,12 @@
             // validasi jumlah uang
             if (jumlah_uang <= 0) {
                 $('#jumlah_uang').addClass('is-invalid');
+                isValid = false;
+            }
+
+            // validasi metode pembayaran
+            if (metode_pembayaran.length === 0) {
+                $("input[name='metode_pembayaran']").addClass('is-invalid');
                 isValid = false;
             }
 

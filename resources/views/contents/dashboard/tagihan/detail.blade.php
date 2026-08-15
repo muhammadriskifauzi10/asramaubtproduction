@@ -1,5 +1,50 @@
 @extends('layouts.main')
 
+@section('mystyles')
+    <style>
+        input[name="metode_pembayaran"] {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+
+            border: 2px solid var(--bs-secondary-color);
+            border-radius: 50%;
+
+            vertical-align: middle;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Belum dipilih + validasi gagal */
+        input[name="metode_pembayaran"].is-invalid {
+            border-color: var(--bs-danger);
+        }
+
+        /* Dipilih */
+        input[name="metode_pembayaran"]:checked {
+            border-color: var(--bs-primary);
+        }
+
+        /* Titik tengah */
+        input[name="metode_pembayaran"]:checked::after {
+            content: "";
+            position: absolute;
+
+            width: 8px;
+            height: 8px;
+
+            background-color: var(--bs-primary);
+            border-radius: 50%;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+@endsection
+
 @section('contents')
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
@@ -13,7 +58,8 @@
                 $piutang = $tagihan->total_tagihan - $tagihan->total_potongan_harga - $tagihan->total_bayar;
             @endphp
             <div class="my-2 d-flex align-content-center justify-content-end gap-2">
-                <a href="javascript:void(0)" class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
+                <a href="javascript:void(0)"
+                    class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
                     data-bs-toggle="tooltip" title="Bayar" style="width: 100px;"
                     onclick="openModalPay({{ $tagihan->penyewa->nim }}, '{{ $tagihan->no_invoice }}', {{ $piutang }})">
                     <i class="fa fa-credit-card me-1"></i> Bayar
@@ -182,7 +228,7 @@
                                     @php
                                         $no = 1;
                                     @endphp
-                                    @forelse (\App\Models\Depositpembayaran::where('no_invoice', '260813-001')->orderBy('created_at', 'DESC')->get() as $row)
+                                    @forelse (\App\Models\Depositpembayaran::where('no_invoice', $tagihan->no_invoice)->where('jenis_pembayaran', 'Penggunaan')->where('status', 1)->orderBy('created_at', 'DESC')->get() as $row)
                                         <tr>
                                             <td>
                                                 @if ($tagihan->status_pembayaran == 'pending')
@@ -234,23 +280,23 @@
                                         $no = 1;
                                     @endphp
                                     @forelse (\App\Models\Transaksi::where('no_invoice', $tagihan->no_invoice)
-                                                                                                     ->orderByRaw("
-                                                                                                            COALESCE(
-                                                                                                                (SELECT parent.no_transaksi
-                                                                                                                    FROM transaksi AS parent
-                                                                                                                    WHERE parent.id = transaksi.parent_id)
+                                                                                                                                                             ->orderByRaw("
+                                                                                                                                                                    COALESCE(
+                                                                                                                                                                        (SELECT parent.no_transaksi
+                                                                                                                                                                            FROM transaksi AS parent
+                                                                                                                                                                            WHERE parent.id = transaksi.parent_id)
     ,
-                                                                                                                transaksi.no_transaksi
-                                                                                                            ) DESC
-                                                                                                        ")
-                                                                                                        ->orderByRaw("
-                                                                                                            CASE
-                                                                                                                WHEN transaksi.parent_id IS NULL THEN 0
-                                                                                                                ELSE 1
-                                                                                                            END ASC
-                                                                                                        ")
-                                                                                                        ->orderBy('created_at', 'DESC')
-                                                                                                        ->get() as $row)
+                                                                                                                                                                        transaksi.no_transaksi
+                                                                                                                                                                    ) DESC
+                                                                                                                                                                ")
+                                                                                                                                                                ->orderByRaw("
+                                                                                                                                                                    CASE
+                                                                                                                                                                        WHEN transaksi.parent_id IS NULL THEN 0
+                                                                                                                                                                        ELSE 1
+                                                                                                                                                                    END ASC
+                                                                                                                                                                ")
+                                                                                                                                                                ->orderBy('created_at', 'DESC')
+                                                                                                                                                                ->get() as $row)
                                         @php
                                             $refund = \App\Models\Transaksi::where('parent_id', $row->id)->sum(
                                                 'jumlah_uang',
@@ -639,7 +685,7 @@
                         <input type="radio"
                             name="metode_pembayaran"
                             id="metode_pembayaran_0"
-                            value="Cash" checked>
+                            value="Cash">
                         <label class="form-check-label" for="metode_pembayaran_0">
                             Cash
                         </label>
@@ -724,11 +770,14 @@
             // hapus titik (format rupiah)
             let jumlah_uang = parseInt(jumlah_uang_raw.replace(/\./g, '')) || 0;
 
+            let metode_pembayaran = $("input[name='metode_pembayaran']:checked");
+
             let isValid = true;
 
             // reset error dulu
             $('#tanggal_bayar').removeClass('is-invalid');
             $('#jumlah_uang').removeClass('is-invalid');
+            $("input[name='metode_pembayaran']").removeClass('is-invalid');
 
             // validasi tanggal bayar
             if (tanggal_bayar == '') {
@@ -739,6 +788,12 @@
             // validasi jumlah uang
             if (jumlah_uang <= 0) {
                 $('#jumlah_uang').addClass('is-invalid');
+                isValid = false;
+            }
+
+            // validasi metode pembayaran
+            if (metode_pembayaran.length === 0) {
+                $("input[name='metode_pembayaran']").addClass('is-invalid');
                 isValid = false;
             }
 
@@ -848,7 +903,7 @@
                         <input type="radio"
                             name="metode_pembayaran"
                             id="metode_pembayaran_0"
-                            value="Cash" checked>
+                            value="Cash">
                         <label class="form-check-label" for="metode_pembayaran_0">
                             Cash
                         </label>
@@ -1024,12 +1079,15 @@
             let fileInput = $('#file_bukti')[0];
             let file_bukti = fileInput.files[0];
 
+            let metode_pembayaran = $("input[name='metode_pembayaran']:checked");
+
             let isValid = true;
 
             // reset error dulu
             $('#tanggal_bayar').removeClass('is-invalid');
             $('#jumlah_uang').removeClass('is-invalid');
             $('#file_bukti').removeClass('is-invalid');
+            $("input[name='metode_pembayaran']").removeClass('is-invalid');
 
             // validasi tanggal bayar
             if (tanggal_bayar == '') {
@@ -1058,6 +1116,12 @@
                     $('#file_bukti').addClass('is-invalid');
                     return;
                 }
+            }
+
+            // validasi metode pembayaran
+            if (metode_pembayaran.length === 0) {
+                $("input[name='metode_pembayaran']").addClass('is-invalid');
+                isValid = false;
             }
 
             if (!isValid) {

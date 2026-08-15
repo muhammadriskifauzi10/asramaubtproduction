@@ -11,9 +11,12 @@ class Depositpembayaran extends Model
 
     protected $fillable = [
         'deposit_id',
+        'parent_id',
         'nim',
         'no_invoice',
         'jumlah_digunakan',
+        'jenis_pembayaran',
+        'status',
         'operator_id'
     ];
 

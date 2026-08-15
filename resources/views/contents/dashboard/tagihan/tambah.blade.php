@@ -75,11 +75,12 @@
                                         class="form-control form-select-2 @error('kamar') is-invalid @enderror"
                                         id="kamar" style="width: 100%">
                                         <option value="">Pilih kamar</option>
-                                        @foreach (\App\Models\Kamar::whereColumn('jumlah_penyewa', '<', 'kapasitas')->get() as $row)
+                                        @foreach (\App\Models\Kamar::whereColumn('jumlah_penyewa', '<', 'kapasitas')->orderby('tipe_asrama_id', 'ASC')->orderby('lantai', 'ASC')->orderby('nomor_kamar', 'ASC')->get() as $row)
                                             <option value="{{ $row->id }}"
                                                 {{ old('kamar') == $row->id ? 'selected' : '' }}>
                                                 Lokasi: {{ $row->type->nama ?? '' }} | Lantai: {{ $row->lantai }}
-                                                | Kamar {{ $row->nomor_kamar }}
+                                                | Kamar {{ $row->nomor_kamar }} (Tersedia
+                                                {{ $row->kapasitas - $row->jumlah_penyewa }} Bed)
                                             </option>
                                         @endforeach
                                     </select>

@@ -220,6 +220,11 @@
                     <i class="fa-solid fa-bed"></i>
                     <span>Kamar</span>
                 </a> --}}
+                <a href="{{ route('tagih') }}"
+                    class="list-group-item sidebar-link {{ request()->is('tagih') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Kategori Tagihan</span>
+                </a>
 
                 <a href="{{ route('harga') }}"
                     class="list-group-item sidebar-link {{ request()->is('harga*') ? 'active' : '' }}">
@@ -238,13 +243,6 @@
                     <i class="fa-solid fa-utensils"></i>
                     <span>Tipe Catering</span>
                 </a> --}}
-
-                <a href="{{ route('tagih') }}"
-                    class="list-group-item sidebar-link {{ request()->is('tagih') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-invoice"></i>
-                    <span>Kategori Tagihan</span>
-                </a>
-
                 <div class="sidebar-title">Manajemen Pengguna</div>
 
                 <a href="{{ route('role') }}"

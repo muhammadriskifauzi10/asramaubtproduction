@@ -32,6 +32,17 @@
                                     <th scope="col">TERSEDIA</th>
                                 </tr>
                             </thead>
+                            <tfoot class="bg-dark text-light">
+                                <tr>
+                                    <th></th>
+                                    <th>TOTAL</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -93,6 +104,79 @@
                     tooltipTriggerList.map(function(tooltipTriggerEl) {
                         return new bootstrap.Tooltip(tooltipTriggerEl);
                     });
+                },
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Fungsi untuk mengubah data menjadi angka
+                    var intVal = function(i) {
+                        if (typeof i === 'string') {
+                            return parseInt(i.replace(/[\$,]/g, '')) || 0;
+                        }
+
+                        if (typeof i === 'number') {
+                            return i;
+                        }
+
+                        return 0;
+                    };
+
+                    // JUMLAH LANTAI - kolom index 2
+                    var totalLantai = api
+                        .column(2, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // JUMLAH KAMAR - kolom index 3
+                    var totalKamar = api
+                        .column(3, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // JUMLAH KAPASITAS - kolom index 4
+                    var totalKapasitas = api
+                        .column(4, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // JUMLAH PENYEWA - kolom index 5
+                    var totalPenyewa = api
+                        .column(5, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // TERSEDIA - kolom index 6
+                    var totalTersedia = api
+                        .column(6, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Tampilkan ke footer
+                    $(api.column(2).footer()).html(totalLantai);
+                    $(api.column(3).footer()).html(totalKamar);
+                    $(api.column(4).footer()).html(totalKapasitas);
+                    $(api.column(5).footer()).html(totalPenyewa);
+                    $(api.column(6).footer()).html(totalTersedia);
                 },
             });
         });

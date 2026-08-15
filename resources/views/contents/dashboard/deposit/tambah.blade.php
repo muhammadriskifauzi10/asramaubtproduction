@@ -1,5 +1,50 @@
 @extends('layouts.main')
 
+@section('mystyles')
+    <style>
+        input[name="metode_pembayaran"] {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+
+            border: 2px solid var(--bs-secondary-color);
+            border-radius: 50%;
+
+            vertical-align: middle;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Belum dipilih + validasi gagal */
+        input[name="metode_pembayaran"].is-invalid {
+            border-color: var(--bs-danger);
+        }
+
+        /* Dipilih */
+        input[name="metode_pembayaran"]:checked {
+            border-color: var(--bs-primary);
+        }
+
+        /* Titik tengah */
+        input[name="metode_pembayaran"]:checked::after {
+            content: "";
+            position: absolute;
+
+            width: 8px;
+            height: 8px;
+
+            background-color: var(--bs-primary);
+            border-radius: 50%;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+@endsection
+
 @section('contents')
     <div class="container-fluid">
         <h1 class="mt-4">{{ $judul }}</h1>
@@ -127,6 +172,9 @@
             const defaultBankId = 2;
             let banks = [];
 
+            // Ambil old value dari Laravel
+            const oldMetodePembayaran = @json(old('metode_pembayaran'));
+
             try {
                 const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
                 banks = await res.json();
@@ -136,12 +184,16 @@
 
                 let bankOptions = "";
                 banks.forEach((bank) => {
+                    const bankValue = `${bank.name} - ${bank.account_name}`;
+
                     bankOptions += `
                         <div class="form-check mb-3">
                             <input type="radio"
                                 name="metode_pembayaran"
                                 id="metode_pembayaran_0"
-                                value="Cash" checked>
+                                class="@error('metode_pembayaran') is-invalid @enderror"
+                                value="Cash"
+                                ${oldMetodePembayaran === 'Cash' ? 'checked' : ''}>
                             <label class="form-check-label" for="metode_pembayaran_0">
                                 Cash
                             </label>
@@ -150,7 +202,9 @@
                             <input type="radio"
                                 name="metode_pembayaran"
                                 id="metode_pembayaran_${bank.id}"
-                                value="${bank.name} - ${bank.account_name}">
+                                class="@error('metode_pembayaran') is-invalid @enderror"
+                                value="${bankValue}"
+                                ${oldMetodePembayaran === bankValue ? 'checked' : ''}>
                             <label class="form-check-label" for="metode_pembayaran_${bank.id}">
                                 ${bank.name} - ${bank.account_number}
                                 <br>

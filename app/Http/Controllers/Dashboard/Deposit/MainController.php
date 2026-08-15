@@ -44,7 +44,7 @@ class MainController extends Controller
             ->when($status != "", function ($query) use ($status) {
                 $query->where('status', $status);
             })
-            // ->orderby('created_at', 'DESC')
+            ->orderby('created_at', 'DESC')
             ->get();
 
         $output = [];
@@ -104,6 +104,7 @@ class MainController extends Controller
             'nim' => ['required', 'exists:penyewa,nim'],
             'tanggal_bayar' => ['required'],
             'jumlah_uang' => ['required'],
+            'metode_pembayaran' => ['required'],
         ], [
             'nim.required' => 'Penyewa wajib dipilih',
             'nim.exists' => 'Penyewa tidak valid',
@@ -398,7 +399,7 @@ class MainController extends Controller
 
                 // jika jumlah digunakan sudah habis, hapus pembayaran
                 if ($jumlah_uang >= $jumlah_digunakan) {
-                    $depositpembayaran->delete();
+                    $depositpembayaran->update(['status' => 0]);
                 }
 
                 // ambil ulang deposit
@@ -409,6 +410,17 @@ class MainController extends Controller
                         'status' => 1
                     ]);
                 }
+
+                Depositpembayaran::create([
+                    'deposit_id' => $deposit_id,
+                    'parent_id' => $depositpembayaran->id,
+                    'nim' => $depositpembayaran->nim,
+                    'no_invoice' => $depositpembayaran->no_invoice,
+                    'jumlah_digunakan' => $jumlah_uang,
+                    'jenis_pembayaran' => 'Refund',
+                    'status' => 1,
+                    'operator_id' => auth()->user()->id
+                ]);
 
                 DB::commit();
                 return response()->json([
