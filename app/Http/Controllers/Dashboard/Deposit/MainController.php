@@ -79,6 +79,7 @@ class MainController extends Controller
                     ' . $row->no_transaksi . '
                 </button>',
                 'jumlah_uang' => 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.'),
+                'jumlah_digunakan' => 'RP. ' . number_format($row->pembayaranPenggunaan->sum('jumlah_digunakan'), '0', '.', '.'),
                 'saldo' => 'RP. ' . number_format($row->saldo, '0', '.', '.'),
                 'metode_pembayaran' => $row->metode_pembayaran,
                 'status' => $row->status == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Habis</span>',
@@ -416,7 +417,7 @@ class MainController extends Controller
                     'parent_id' => $depositpembayaran->id,
                     'nim' => $depositpembayaran->nim,
                     'no_invoice' => $depositpembayaran->no_invoice,
-                    'jumlah_digunakan' => $jumlah_uang,
+                    'jumlah_digunakan' => -$jumlah_uang,
                     'jenis_pembayaran' => 'Refund',
                     'status' => 1,
                     'operator_id' => auth()->user()->id

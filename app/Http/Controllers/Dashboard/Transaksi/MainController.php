@@ -177,7 +177,7 @@ class MainController extends Controller
                     </div>
                     ';
                 } else {
-                    $depositpembayaran = Depositpembayaran::where('deposit_id', $deposit->id)->where('jenis_pembayaran', 'Penggunaan')->get();
+                    $depositpembayaran = Depositpembayaran::where('deposit_id', $deposit->id)->orderBy('created_at', 'DESC')->get();
 
                     $tbodydeposit = [];
                     if ($depositpembayaran->count() > 0) {
@@ -186,13 +186,25 @@ class MainController extends Controller
                             $detail = '<a href="' . route('tagihan.detail', encrypt($row->no_invoice)) . '" class="btn btn-link" target="_blank">
                             ' . $row->no_invoice . '
                             </a>';
+
+                            if ($row->jenis_pembayaran == 'Refund') {
+                                $jumlah_pembayaran = '<span style="color: red; font-weight: bold">
+                                                        RP. ' . number_format($row->jumlah_digunakan, '0', '.', '.') . '
+                                                    </span>';
+                            } else {
+                                $jumlah_pembayaran = '<span>
+                                                        RP. ' . number_format($row->jumlah_digunakan, '0', '.', '.') . '
+                                                    </span>';
+                            }
+
                             $tbodydeposit[] = '
                             <tr>
                                 <td>' . $no++ . '</td>
                                 <td>' . $row->deposit->no_transaksi . '</td>
                                 <td>' . Carbon::parse($row->created_at)->format('Y-m-d H:i') . '</td>
-                                <td>RP. ' . number_format($row->jumlah_digunakan, '0', '.', '.') . '</td>
+                                <td>' . $jumlah_pembayaran . '</td>
                                 <td>' . $detail . '</td>
+                                <td>' . $row->jenis_pembayaran . '</td>
                                 <td>' . $row->user->name . '</td>
                             </tr>
                             ';
@@ -200,7 +212,7 @@ class MainController extends Controller
                     } else {
                         $tbodydeposit[] = '
                             <tr>
-                                <td class="text-center" colspan="6">Tidak ada data</td>
+                                <td class="text-center" colspan="7">Tidak ada data</td>
                             </tr>
                             ';
                     }
@@ -249,6 +261,7 @@ class MainController extends Controller
                                             <th scope="col">TANGGAL PENGGUNAAN</th>
                                             <th scope="col">JUMLAH DIGUNAKAN</th>
                                             <th scope="col">METODE PEMBAYARAN</th>
+                                            <th scope="col">JENIS PEMBAYARAN</th>
                                             <th scope="col">OPERATOR</th>
                                         </tr>
                                     </thead>

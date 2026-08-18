@@ -124,6 +124,7 @@
                                     <th scope="col">NIM</th>
                                     <th scope="col">NAMA BILL TO</th>
                                     <th scope="col">JUMLAH UANG</th>
+                                    <th scope="col">JUMLAH DIGUNAKAN</th>
                                     <th scope="col">SALDO</th>
                                     <th scope="col">METODE PEMBAYARAN</th>
                                     <th scope="col">TANGGAL REFERENSI BAYAR</th>
@@ -179,6 +180,9 @@
                     },
                     {
                         data: "jumlah_uang",
+                    },
+                    {
+                        data: "jumlah_digunakan",
                     },
                     {
                         data: "saldo",

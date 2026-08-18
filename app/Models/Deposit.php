@@ -28,6 +28,13 @@ class Deposit extends Model
         return $this->hasMany(Depositpembayaran::class, 'deposit_id');
     }
 
+    public function pembayaranPenggunaan()
+    {
+        return $this->hasMany(Depositpembayaran::class, 'deposit_id')
+            ->where('jenis_pembayaran', 'Penggunaan')
+            ->where('status', 1);
+    }
+
     public function refund()
     {
         return $this->hasMany(Depositrefund::class, 'deposit_id');
