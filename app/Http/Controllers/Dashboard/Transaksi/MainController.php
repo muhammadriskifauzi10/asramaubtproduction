@@ -7,7 +7,6 @@ use App\Models\Deposit;
 use App\Models\Depositpembayaran;
 use App\Models\Pembayaran;
 use App\Models\Transaksi;
-use App\Models\Transaksirefund;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -70,20 +69,12 @@ class MainController extends Controller
         $output = [];
         $no = 1;
         foreach ($transaksi as $row) {
-            if ($row->jenis_transaksi == 'Asrama') {
-                $btn1 = '<a href="' . route('transaksi.kwitansi', encrypt($row->no_transaksi)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Kwitansi" style="width: 40px;" target="_blank">
-                    <i class="fa fa-receipt"></i>
-                </a>';
+            if ($row->jenis_transaksi == "Refund") {
+                $jumlah_uang = '<span style="color: red; font-weight: bold">RP. ' . number_format($row->jumlah_uang, '0', '.', '.') . '</span>';
             } else {
-                $btn1 = '';
+                $jumlah_uang = 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.');
             }
-
-            $aksi = '
-            <div class="d-flex align-items-center justify-content-center gap-1">
-                ' . $btn1 . '
-            </div>
-            ';
-
+            
             $output[] = [
                 // 'aksi' => $aksi,
                 'no' => $no++,
@@ -96,7 +87,7 @@ class MainController extends Controller
                 'nama' => $row->penyewa->namalengkap ?? '',
                 'tanggal_transaksi' => Carbon::parse($row->created_at)->format('Y-m-d H:i'),
                 'tanggal_referensi_bayar' => Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i'),
-                'jumlah_uang' => 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.'),
+                'jumlah_uang' => $jumlah_uang,
                 'metode_pembayaran' => $row->metode_pembayaran,
                 'file_bukti' => $row->file_bukti ? '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold no-cursor">Lihat File</a>' : '',
                 'jenis_pembayaran' => $row->jenis_transaksi,
@@ -187,7 +178,7 @@ class MainController extends Controller
                             ' . $row->no_invoice . '
                             </a>';
 
-                            if ($row->jenis_pembayaran == 'Refund') {
+                            if ($row->jenis_pembayaran == 'Pengembalian') {
                                 $jumlah_pembayaran = '<span style="color: red; font-weight: bold">
                                                         RP. ' . number_format($row->jumlah_digunakan, '0', '.', '.') . '
                                                     </span>';
@@ -222,13 +213,15 @@ class MainController extends Controller
                     if ($transaksirefund->count() > 0) {
                         $no = 1;
                         foreach ($transaksirefund as $row) {
+                            $jumlah_uang = '<span style="color: red; font-weight: bold">RP. ' . number_format($row->jumlah_uang, '0', '.', '.') . '</span>';
+
                             $tbody[] = '
                             <tr>
                                 <td>' . $no++ . '</td>
                                 <td>' . $row->parent->no_invoice . '</td>
                                 <td>' . $row->no_transaksi . '</td>
                                 <td>' . Carbon::parse($row->created_at)->format('Y-m-d H:i') . '</td>
-                                <td>RP. ' . number_format($row->jumlah_uang, '0', '.', '.') . '</td>
+                                <td>' . $jumlah_uang . '</td>
                                 <td>' . $row->metode_pembayaran . '</td>
                                 <td>' . Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i') . '</td>
                                 <td>' . $row->user->name . '</td>

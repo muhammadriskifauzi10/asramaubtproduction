@@ -243,6 +243,23 @@
                         modifier: {
                             search: "none",
                         },
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Indeks 11, 12, 13, 14, 15 adalah kolom nominal uang
+                                var targetColumns = [11, 12, 13, 14, 15];
+
+                                if (targetColumns.includes(column) && typeof data ===
+                                    'string') {
+                                    // Hapus 'RP.', 'RP', titik pemisah, dan spasi
+                                    var cleanValue = data.replace(/RP\.?|\s|\./gi, '');
+
+                                    return !isNaN(cleanValue) && cleanValue !== '' ? parseInt(
+                                        cleanValue, 10) : 0;
+                                }
+
+                                return data;
+                            }
+                        }
                     },
                     title: `Tagihan`
                 }, ],

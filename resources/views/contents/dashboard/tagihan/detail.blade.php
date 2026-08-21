@@ -247,9 +247,13 @@
                                             <td>{{ $row->deposit->no_transaksi }}</td>
                                             <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d H:i') }}
                                             </td>
-                                            <td>RP. {{ number_format($row->jumlah_digunakan, 0, '.', '.') }}</td>
-                                            <td>RP.
-                                                {{ number_format($row->refunds->sum('jumlah_digunakan'), 0, '.', '.') }}
+                                            <td>
+                                                RP. {{ number_format($row->jumlah_digunakan, 0, '.', '.') }}
+                                            </td>
+                                            <td>
+                                                <span style="color: red; font-weight: bold">RP.
+                                                    {{ number_format($row->refunds->sum('jumlah_digunakan'), 0, '.', '.') }}
+                                                </span>
                                             </td>
                                             <td>RP.
                                                 {{ number_format($row->jumlah_digunakan + $row->refunds->sum('jumlah_digunakan'), 0, '.', '.') }}
@@ -288,23 +292,23 @@
                                         $no = 1;
                                     @endphp
                                     @forelse (\App\Models\Transaksi::where('no_invoice', $tagihan->no_invoice)
-                                                                                                                                                                                     ->orderByRaw("
-                                                                                                                                                                                            COALESCE(
-                                                                                                                                                                                                (SELECT parent.no_transaksi
-                                                                                                                                                                                                    FROM transaksi AS parent
-                                                                                                                                                                                                    WHERE parent.id = transaksi.parent_id)
+                                                                                                                                                                                                 ->orderByRaw("
+                                                                                                                                                                                                        COALESCE(
+                                                                                                                                                                                                            (SELECT parent.no_transaksi
+                                                                                                                                                                                                                FROM transaksi AS parent
+                                                                                                                                                                                                                WHERE parent.id = transaksi.parent_id)
     ,
-                                                                                                                                                                                                transaksi.no_transaksi
-                                                                                                                                                                                            ) DESC
-                                                                                                                                                                                        ")
-                                                                                                                                                                                        ->orderByRaw("
-                                                                                                                                                                                            CASE
-                                                                                                                                                                                                WHEN transaksi.parent_id IS NULL THEN 0
-                                                                                                                                                                                                ELSE 1
-                                                                                                                                                                                            END ASC
-                                                                                                                                                                                        ")
-                                                                                                                                                                                        ->orderBy('created_at', 'DESC')
-                                                                                                                                                                                        ->get() as $row)
+                                                                                                                                                                                                            transaksi.no_transaksi
+                                                                                                                                                                                                        ) DESC
+                                                                                                                                                                                                    ")
+                                                                                                                                                                                                    ->orderByRaw("
+                                                                                                                                                                                                        CASE
+                                                                                                                                                                                                            WHEN transaksi.parent_id IS NULL THEN 0
+                                                                                                                                                                                                            ELSE 1
+                                                                                                                                                                                                        END ASC
+                                                                                                                                                                                                    ")
+                                                                                                                                                                                                    ->orderBy('created_at', 'DESC')
+                                                                                                                                                                                                    ->get() as $row)
                                         @php
                                             $refund = \App\Models\Transaksi::where('parent_id', $row->id)->sum(
                                                 'jumlah_uang',

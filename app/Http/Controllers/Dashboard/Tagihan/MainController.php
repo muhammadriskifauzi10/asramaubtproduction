@@ -10,8 +10,6 @@ use App\Models\Pembayarandetail;
 use App\Models\Penyewa;
 use App\Models\Potonganharga;
 use App\Models\Transaksi;
-use App\Models\Deposit;
-use App\Models\Depositpembayaran;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -55,12 +53,14 @@ class MainController extends Controller
             $hutang = ($row->total_tagihan - $row->total_potongan_harga) - $row->total_bayar;
 
             if ($row->status_pembayaran == 'completed') {
-                $status_pembayaran = '<strong class="text-success">Lunas</strong>';
+                // $status_pembayaran = '<strong class="text-success">Lunas</strong>';
+                $status_pembayaran = 'Lunas';
 
                 $btnbayar = '';
                 $btninvoice = '';
             } else if ($row->status_pembayaran == 'pending') {
-                $status_pembayaran = '<strong class="text-warning">Belum Lunas</strong>';
+                // $status_pembayaran = '<strong class="text-warning">Belum Lunas</strong>';
+                $status_pembayaran = 'Belum Lunas';
 
                 $btnbayar = '
                     <button type="button" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Bayar Tagihan" style="width: 40px;" onclick="openModalPay(\'' . $row->penyewa->nim . '\', \'' . $row->no_invoice . '\', \'' . intval($hutang) . '\')">
@@ -73,7 +73,8 @@ class MainController extends Controller
                     </a>
                 ';
             } else {
-                $status_pembayaran = '<strong class="text-danger">Gagal</strong>';
+                // $status_pembayaran = '<strong class="text-danger">Gagal</strong>';
+                $status_pembayaran = 'Gagal';
 
                 $btnbayar = '';
                 $btninvoice = '';
@@ -114,11 +115,11 @@ class MainController extends Controller
                 'nim' => $row->penyewa->nim,
                 'nama_bill_to' => $row->nama_bill_to,
                 'kamar' => $row->kamar->nomor_kamar,
-                'total_tagihan' => intval($row->total_tagihan),
-                'total_potongan_harga' => intval($row->total_potongan_harga),
-                'net_tagihan' => intval($net_tagihan),
-                'hutang' => intval($hutang),
-                'total_bayar' => intval($row->total_bayar),
+                'total_tagihan' => 'RP. ' . number_format($row->total_tagihan, '0', '.', '.'),
+                'total_potongan_harga' => 'RP. ' . number_format($row->total_potongan_harga, '0', '.', '.'),
+                'net_tagihan' => 'RP. ' . number_format($net_tagihan, '0', '.', '.'),
+                'hutang' => 'RP. ' . number_format($hutang, '0', '.', '.'),
+                'total_bayar' => 'RP. ' . number_format($row->total_bayar, '0', '.', '.'),
                 'operator' => $row->user->name,
                 'status_row' => $row->status_pembayaran,
             ];

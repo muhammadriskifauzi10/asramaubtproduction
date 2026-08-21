@@ -35,11 +35,11 @@ class Deposit extends Model
             ->where('status', 1);
     }
 
-    public function refund()
+    public function refundpembayaranPenggunaan()
     {
-        return $this->hasMany(Depositrefund::class, 'deposit_id');
+        return $this->hasMany(Depositpembayaran::class, 'deposit_id');
     }
-
+    
     public function penyewa()
     {
         return $this->hasOne(Penyewa::class, 'nim', 'nim');

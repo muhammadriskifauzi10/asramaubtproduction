@@ -66,6 +66,8 @@ class MainController extends Controller
             </div>
             ';
 
+            $jumlah_refund = Transaksi::where('parent_id', $row->id)->sum('jumlah_uang');
+
             $output[] = [
                 'aksi' => $aksi,
                 'namalengkap' => $row->penyewa->namalengkap,
@@ -79,7 +81,8 @@ class MainController extends Controller
                     ' . $row->no_transaksi . '
                 </button>',
                 'jumlah_uang' => 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.'),
-                'jumlah_digunakan' => 'RP. ' . number_format($row->pembayaranPenggunaan->sum('jumlah_digunakan'), '0', '.', '.'),
+                'jumlah_digunakan' => 'RP. ' . number_format($row->refundpembayaranPenggunaan->sum('jumlah_digunakan'), '0', '.', '.'),
+                'jumlah_refund' => 'RP. ' . number_format($jumlah_refund, '0', '.', '.'),
                 'saldo' => 'RP. ' . number_format($row->saldo, '0', '.', '.'),
                 'metode_pembayaran' => $row->metode_pembayaran,
                 'status' => $row->status == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Habis</span>',
@@ -419,7 +422,7 @@ class MainController extends Controller
                     'nim' => $depositpembayaran->nim,
                     'no_invoice' => $depositpembayaran->no_invoice,
                     'jumlah_digunakan' => -$jumlah_uang,
-                    'jenis_pembayaran' => 'Refund',
+                    'jenis_pembayaran' => 'Pengembalian',
                     'status' => 1,
                     'operator_id' => auth()->user()->id
                 ]);

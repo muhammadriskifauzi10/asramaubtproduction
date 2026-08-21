@@ -177,6 +177,33 @@
                         modifier: {
                             search: "none",
                         },
+                        format: {
+                            body: function(data, row, column, node) {
+                                if (column === 2) {
+                                    var button = $(node).find('.lihat-detail');
+
+                                    if (button.length) {
+                                        return button.data('no-transaksi');
+                                    }
+
+                                    return data;
+                                }
+
+                                // Indeks 11, 12, 13, 14, 15 adalah kolom nominal uang
+                                var targetColumns = [5];
+
+                                if (targetColumns.includes(column) && typeof data ===
+                                    'string') {
+                                    // Hapus 'RP.', 'RP', titik pemisah, dan spasi
+                                    var cleanValue = data.replace(/RP\.?|\s|\./gi, '');
+
+                                    return !isNaN(cleanValue) && cleanValue !== '' ? parseInt(
+                                        cleanValue, 10) : 0;
+                                }
+
+                                return data;
+                            }
+                        }
                     },
                     title: `Pembayaran`
                 }, ],
