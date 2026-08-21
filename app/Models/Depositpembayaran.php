@@ -20,6 +20,11 @@ class Depositpembayaran extends Model
         'operator_id'
     ];
 
+    public function refunds()
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
     public function deposit()
     {
         return $this->belongsTo(Deposit::class, 'deposit_id');

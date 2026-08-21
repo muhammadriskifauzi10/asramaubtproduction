@@ -371,7 +371,8 @@ class MainController extends Controller
                 $pembayaran = Pembayaran::where('no_invoice', $depositpembayaran->no_invoice)->first();
                 $deposit = Deposit::find($depositpembayaran->deposit_id);
 
-                $jumlah_digunakan = (int) $depositpembayaran->jumlah_digunakan;
+                $jumlah_digunakan = (int) $depositpembayaran->jumlah_digunakan + (int) $depositpembayaran->refunds->sum('jumlah_digunakan');
+
                 if ($jumlah_uang <= 0) {
                     return response()->json([
                         'status' => 400,
@@ -392,7 +393,7 @@ class MainController extends Controller
                 $deposit_id = $depositpembayaran->deposit_id;
 
                 // kurangi saldo yang digunakan
-                $depositpembayaran->decrement('jumlah_digunakan', $jumlah_uang);
+                // $depositpembayaran->decrement('jumlah_digunakan', $jumlah_uang);
                 // kurangi total bayar pembayaran
                 $pembayaran->decrement('total_bayar', $jumlah_uang);
                 // tambah saldo deposit
