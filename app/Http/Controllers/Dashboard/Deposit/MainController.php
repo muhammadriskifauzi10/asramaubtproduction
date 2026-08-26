@@ -66,7 +66,7 @@ class MainController extends Controller
             </div>
             ';
 
-            $jumlah_refund = Transaksi::where('parent_id', $row->id)->sum('jumlah_uang');
+            $jumlah_refund = Transaksi::where('parent_id', $row->transaksi->id)->sum('jumlah_uang');
 
             $output[] = [
                 'aksi' => $aksi,
@@ -108,12 +108,15 @@ class MainController extends Controller
             'nim' => ['required', 'exists:penyewa,nim'],
             'tanggal_bayar' => ['required'],
             'jumlah_uang' => ['required'],
+            'file_bukti' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'metode_pembayaran' => ['required'],
         ], [
             'nim.required' => 'Penyewa wajib dipilih',
             'nim.exists' => 'Penyewa tidak valid',
             'tanggal_bayar.required' => 'Kolom tanggal bayar referensi wajib diisi',
             'jumlah_uang.required' => 'Kolom jumlah uang wajib diisi',
+            'file_bukti.file' => 'File bukti tidak valid',
+            'file_bukti.mimes' => 'File bukti harus berupa PDF, JPG, JPEG, atau PNG',
         ]);
 
 
@@ -155,6 +158,15 @@ class MainController extends Controller
             // yymmddxxxxxx
             $no_transaksi = sprintf('%02d%02d%02d%06d', date('y'), $bulan, $tanggal, $nomor + 1);
 
+            // file bukti
+            $file_bukti = null;
+            if (request()->file('file_bukti')) {
+                $file_bukti = 'file_bukti' . time() . '.' . request()->file('file_bukti')->getClientOriginalExtension();
+                $file = request()->file('file_bukti');
+                $tujuan_upload = $_SERVER['DOCUMENT_ROOT'] . '/img/deposit/D' . $no_transaksi;
+                $file->move($tujuan_upload, $file_bukti);
+            }
+
             $post = Deposit::create([
                 'nim' => $nim,
                 'no_transaksi' => 'D' . $no_transaksi,
@@ -162,6 +174,7 @@ class MainController extends Controller
                 'jumlah_uang' => $jumlah_uang,
                 'saldo' => $jumlah_uang,
                 'metode_pembayaran' => $metode_pembayaran,
+                'file_bukti' => $file_bukti,
                 'operator_id' => auth()->user()->id
             ]);
 
@@ -172,6 +185,7 @@ class MainController extends Controller
                     'tanggal_transaksi' => $tgl_bayar,
                     'jumlah_uang' => $jumlah_uang,
                     'metode_pembayaran' => $metode_pembayaran,
+                    'file_bukti' => $file_bukti,
                     'jenis_transaksi' => 'Deposit',
                     'operator_id' => auth()->user()->id
                 ]);

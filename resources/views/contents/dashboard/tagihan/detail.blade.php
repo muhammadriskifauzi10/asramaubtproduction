@@ -223,6 +223,7 @@
                                         <th scope="col">JUMLAH DIKEMBALIKAN</th>
                                         <th scope="col">NET JUMLAH DIGUNAKAN</th>
                                         <th scope="col">METODE PEMBAYARAN</th>
+                                        <th scope="col">FILE BUKTI</th>
                                         <th scope="col">OPERATOR</th>
                                     </tr>
                                 </thead>
@@ -244,7 +245,12 @@
                                                     </div>
                                                 @endif
                                             </td>
-                                            <td>{{ $row->deposit->no_transaksi }}</td>
+                                            <td>
+                                                <button class="btn btn-link p-0 lihat-detail"
+                                                    data-no-transaksi="{{ $row->deposit->no_transaksi }}">
+                                                    {{ $row->deposit->no_transaksi }}
+                                                </button>
+                                            </td>
                                             <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d H:i') }}
                                             </td>
                                             <td>
@@ -258,12 +264,20 @@
                                             <td>RP.
                                                 {{ number_format($row->jumlah_digunakan + $row->refunds->sum('jumlah_digunakan'), 0, '.', '.') }}
                                             </td>
-                                            <td>{{ $row->no_invoice }}</td>
+                                            <td>{{ $row->deposit->metode_pembayaran }}</td>
+                                            <td>
+                                                @if ($row->deposit->file_bukti)
+                                                    <a href="{{ asset('img/deposit/' . $row->deposit->no_transaksi . '/' . $row->deposit->file_bukti) }}"
+                                                        target="_blank"
+                                                        class="text-primary text-decoration-none fw-bold">FILE
+                                                        BUKTI</a>
+                                                @endif
+                                            </td>
                                             <td>{{ $row->user->name }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8">Belum ada Penggunaan Deposit</td>
+                                            <td colspan="9">Belum ada Penggunaan Deposit</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -277,12 +291,12 @@
                                 <thead class="bg-dark text-light">
                                     <tr>
                                         <th scope="col" width="50"></th>
-                                        <th scope="col">JENIS PEMBAYARAN</th>
                                         <th scope="col">NO KUITANSI</th>
                                         <th scope="col">TANGGAL PEMBAYARAN</th>
                                         <th scope="col">JUMLAH UANG</th>
-                                        <th scope="col">METODE PEMBAYARAN</th>
                                         <th scope="col">TANGGAL REFERENSI BAYAR</th>
+                                        <th scope="col">JENIS PEMBAYARAN</th>
+                                        <th scope="col">METODE PEMBAYARAN</th>
                                         <th scope="col">FILE BUKTI</th>
                                         <th scope="col">OPERATOR</th>
                                     </tr>
@@ -292,23 +306,23 @@
                                         $no = 1;
                                     @endphp
                                     @forelse (\App\Models\Transaksi::where('no_invoice', $tagihan->no_invoice)
-                                                                                                                                                                                                 ->orderByRaw("
-                                                                                                                                                                                                        COALESCE(
-                                                                                                                                                                                                            (SELECT parent.no_transaksi
-                                                                                                                                                                                                                FROM transaksi AS parent
-                                                                                                                                                                                                                WHERE parent.id = transaksi.parent_id)
+                                                                                                                                                                                                                                             ->orderByRaw("
+                                                                                                                                                                                                                                                    COALESCE(
+                                                                                                                                                                                                                                                        (SELECT parent.no_transaksi
+                                                                                                                                                                                                                                                            FROM transaksi AS parent
+                                                                                                                                                                                                                                                            WHERE parent.id = transaksi.parent_id)
     ,
-                                                                                                                                                                                                            transaksi.no_transaksi
-                                                                                                                                                                                                        ) DESC
-                                                                                                                                                                                                    ")
-                                                                                                                                                                                                    ->orderByRaw("
-                                                                                                                                                                                                        CASE
-                                                                                                                                                                                                            WHEN transaksi.parent_id IS NULL THEN 0
-                                                                                                                                                                                                            ELSE 1
-                                                                                                                                                                                                        END ASC
-                                                                                                                                                                                                    ")
-                                                                                                                                                                                                    ->orderBy('created_at', 'DESC')
-                                                                                                                                                                                                    ->get() as $row)
+                                                                                                                                                                                                                                                        transaksi.no_transaksi
+                                                                                                                                                                                                                                                    ) DESC
+                                                                                                                                                                                                                                                ")
+                                                                                                                                                                                                                                                ->orderByRaw("
+                                                                                                                                                                                                                                                    CASE
+                                                                                                                                                                                                                                                        WHEN transaksi.parent_id IS NULL THEN 0
+                                                                                                                                                                                                                                                        ELSE 1
+                                                                                                                                                                                                                                                    END ASC
+                                                                                                                                                                                                                                                ")
+                                                                                                                                                                                                                                                ->orderBy('created_at', 'DESC')
+                                                                                                                                                                                                                                                ->get() as $row)
                                         @php
                                             $refund = \App\Models\Transaksi::where('parent_id', $row->id)->sum(
                                                 'jumlah_uang',
@@ -345,7 +359,6 @@
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td>{{ $row->jenis_transaksi }}</td>
                                             <td>{{ $row->no_transaksi }}</td>
                                             <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d H:i') }}
                                             </td>
@@ -367,8 +380,10 @@
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td>{{ $row->metode_pembayaran }}</td>
                                             <td>{{ \Carbon\Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i') }}
+                                            </td>
+                                            <td>{{ $row->jenis_transaksi }}</td>
+                                            <td>{{ $row->metode_pembayaran }}</td>
                                             <td>
                                                 @if ($row->file_bukti)
                                                     <a href="{{ asset('img/bukti_pembayaran/' . $tagihan->no_invoice . '/' . $row->file_bukti) }}"
@@ -553,6 +568,30 @@
         //         });
         //     });
         // }
+        $(document).on('click', '.lihat-detail', function() {
+            var no_transaksi = $(this).data('no-transaksi');
+
+            $.ajax({
+                url: "{{ route('transaksi.detail') }}",
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    no_transaksi: no_transaksi
+                },
+                beforeSend: function() {
+                    $('#universalModal').modal('show');
+                    $("#universalModalContent").empty();
+                    $("#universalModalContent").addClass("modal-xl modal-dialog-centered");
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        $("#universalModalContent").append(response.dataHTML)
+                    }
+                }
+            });
+
+        });
+
         async function openModalMoveSaldo(id) {
             $("#universalModalContent").html(`
             <form class="modal-content" autocomplete="off" onsubmit="requestMoveSaldo(event)" id="formmovesaldo">

@@ -19,9 +19,15 @@ class Deposit extends Model
         'jumlah_uang',
         'saldo',
         'metode_pembayaran',
+        'file_bukti',
         'status',
         'operator_id',
     ];
+
+    public function transaksi()
+    {
+        return $this->hasOne(Transaksi::class, 'no_transaksi', 'no_transaksi');
+    }
 
     public function pembayaran()
     {
@@ -39,7 +45,7 @@ class Deposit extends Model
     {
         return $this->hasMany(Depositpembayaran::class, 'deposit_id');
     }
-    
+
     public function penyewa()
     {
         return $this->hasOne(Penyewa::class, 'nim', 'nim');

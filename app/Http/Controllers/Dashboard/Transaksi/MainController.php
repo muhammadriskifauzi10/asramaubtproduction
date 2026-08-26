@@ -74,7 +74,17 @@ class MainController extends Controller
             } else {
                 $jumlah_uang = 'RP. ' . number_format($row->jumlah_uang, '0', '.', '.');
             }
-            
+
+            if ($row->file_bukti) {
+                if ($row->jenis_transaksi == 'Deposit') {
+                    $file_bukti = '<a href="' . asset('img/deposit/' . $row->no_transaksi . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold no-cursor">Lihat File</a>';
+                } else {
+                    $file_bukti = '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold no-cursor">Lihat File</a>';
+                }
+            } else {
+                $file_bukti = '';
+            }
+
             $output[] = [
                 // 'aksi' => $aksi,
                 'no' => $no++,
@@ -89,7 +99,7 @@ class MainController extends Controller
                 'tanggal_referensi_bayar' => Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i'),
                 'jumlah_uang' => $jumlah_uang,
                 'metode_pembayaran' => $row->metode_pembayaran,
-                'file_bukti' => $row->file_bukti ? '<a href="' . asset('img/bukti_pembayaran/' . $row->no_invoice . '/' . $row->file_bukti) . '" target="_blank" class="text-primary text-decoration-none fw-bold no-cursor">Lihat File</a>' : '',
+                'file_bukti' => $file_bukti,
                 'jenis_pembayaran' => $row->jenis_transaksi,
                 'operator' => $row->user->name,
             ];
@@ -253,7 +263,7 @@ class MainController extends Controller
                                             <th scope="col">NO KUITANSI</th>
                                             <th scope="col">TANGGAL PENGGUNAAN</th>
                                             <th scope="col">JUMLAH DIGUNAKAN</th>
-                                            <th scope="col">METODE PEMBAYARAN</th>
+                                            <th scope="col">NO INVOICE</th>
                                             <th scope="col">JENIS PEMBAYARAN</th>
                                             <th scope="col">OPERATOR</th>
                                         </tr>

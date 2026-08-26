@@ -57,7 +57,8 @@
             <div class="card-body">
                 <div class="row mb-3 justify-content-center">
                     <div class="col-xl-8">
-                        <form action="{{ route('deposit.post') }}" method="POST" autocomplete="off">
+                        <form action="{{ route('deposit.post') }}" method="POST" autocomplete="off"
+                            enctype="multipart/form-data">
                             @csrf
                             {{-- penyewa --}}
                             <div class="row mb-3">
@@ -110,6 +111,20 @@
                                             value="{{ old('jumlah_uang') }}">
                                     </div>
                                     @error('jumlah_uang')
+                                        <div class="invalid-feedback d-block">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            {{-- file bukti --}}
+                            <div class="row mb-3">
+                                <label for="file_bukti" class="col-xl-3 col-form-label fw-bold">File Bukti <sup
+                                        class="text-danger">(PDF, JPG, JPEG, PNG)</sup></label>
+                                <div class="col-xl-9">
+                                    <input type="file" name="file_bukti" id="file_bukti"
+                                        class="form-control @error('file_bukti') is-invalid @enderror">
+                                    @error('file_bukti')
                                         <div class="invalid-feedback d-block">
                                             {{ $message }}
                                         </div>
