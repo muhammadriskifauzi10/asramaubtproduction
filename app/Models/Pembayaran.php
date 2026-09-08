@@ -15,10 +15,13 @@ class Pembayaran extends Model
     protected $fillable = [
         'no_invoice',
         'tanggal_pembayaran',
+        'jenis_penyewa',
         'tanggal_masuk',
         'tanggal_keluar',
         'durasi',
         'penyewa_id',
+        'nama_lengkap',
+        'no_ktp',
         'nama_bill_to',
         'kamar_id',
         'total_tagihan',

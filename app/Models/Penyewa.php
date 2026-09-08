@@ -13,6 +13,7 @@ class Penyewa extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'jenis_penyewa',
         'angkatan',
         'namalengkap',
         'noktp',

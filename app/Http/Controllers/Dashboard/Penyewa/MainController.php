@@ -28,11 +28,15 @@ class MainController extends Controller
     }
     public function datatablepenyewa()
     {
+        $jenis_penyewa = request()->input('jenis_penyewa');
         $asrama = request()->input('asrama');
 
-        $penyewa = Penyewa::when($asrama || $asrama != 0, function ($query) use ($asrama) {
+        $penyewa = Penyewa::when($jenis_penyewa, function ($query) use ($jenis_penyewa) {
+            $query->where('jenis_penyewa', $jenis_penyewa);
+        })->when($asrama || $asrama != 0, function ($query) use ($asrama) {
             $query->where('status_asrama', $asrama);
-        })->orderby('angkatan', 'DESC')->get();
+        })
+            ->orderby('angkatan', 'DESC')->get();
 
         $output = [];
         foreach ($penyewa as $row) {
@@ -64,6 +68,7 @@ class MainController extends Controller
 
             $output[] = [
                 'aksi' => $aksi,
+                'jenis_penyewa' => $row->jenis_penyewa,
                 'angkatan' => $row->angkatan,
                 'namalengkap' => $row->namalengkap,
                 'nim' => $row->nim,

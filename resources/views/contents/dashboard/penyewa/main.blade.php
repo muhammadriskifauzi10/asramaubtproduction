@@ -10,6 +10,16 @@
         <div class="card mb-4 border-0" style="background-color: rgb(255 227 248)">
             <div class="card-body">
                 <div class="row justify-content-center">
+                    {{-- jenis penyewa --}}
+                    <div class="col-xl-3 mb-3">
+                        <label for="jenis_penyewa" class="form-label fw-bold">Jenis Penyewa</label>
+                        <select class="form-select form-select-2" name="jenis_penyewa" id="jenis_penyewa"
+                            style="width: 100%;">
+                            <option value="">Filter Jenis Penyewa</option>
+                            <option value="mahasiswa">Mahasiswa</option>
+                            <option value="non-mahasiswa">Non Mahasiswa</option>
+                        </select>
+                    </div>
                     {{-- asrama --}}
                     <div class="col-xl-3 mb-3">
                         <label for="asrama" class="form-label fw-bold">Asrama</label>
@@ -42,6 +52,7 @@
                             <thead class="bg-dark text-light">
                                 <tr>
                                     <th scope="col" width="50"></th>
+                                    <th scope="col">JENIS PENYEWA</th>
                                     <th scope="col">ANGKATAN</th>
                                     <th scope="col">NAMA LENGKAP</th>
                                     <th scope="col">NIM</th>
@@ -76,11 +87,15 @@
                     // dataSrc: ""
                     dataType: "json",
                     data: function(d) {
+                        d.jenis_penyewa = $("#jenis_penyewa").val();
                         d.asrama = $("#asrama").val();
                     },
                 },
                 columns: [{
                         data: "aksi",
+                    },
+                    {
+                        data: "jenis_penyewa",
                     },
                     {
                         data: "angkatan",
@@ -137,7 +152,7 @@
                 },
             });
 
-            $("#asrama").change(function() {
+            $("#jenis_penyewa, #asrama").change(function() {
                 table.ajax.reload();
             });
         });

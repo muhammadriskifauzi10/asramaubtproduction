@@ -134,10 +134,13 @@ class MainController extends Controller
 
                         Pembayaran::create([
                             'no_invoice' => $no_invoice,
+                            'jenis_penyewa' => $data_penyewa->jenis_penyewa,
                             'tanggal_masuk' => $tanggalmasuk,
                             'tanggal_keluar' => $tenggatwaktu,
                             'durasi' => $jumlahbulan,
                             'penyewa_id' => $data_penyewa->id,
+                            'nama_lengkap' => $data_penyewa->namalengkap,
+                            'no_ktp' => $data_penyewa->noktp,
                             'nama_bill_to' => $data_penyewa->nama_bill_to,
                             'kamar_id' => $master->kamar_id,
                             'total_potongan_harga' => 0,

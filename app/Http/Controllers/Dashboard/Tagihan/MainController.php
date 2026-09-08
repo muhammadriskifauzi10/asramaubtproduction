@@ -31,6 +31,7 @@ class MainController extends Controller
         $dari_tanggal = request()->input('dari_tanggal');
         $sampai_tanggal = request()->input('sampai_tanggal');
         $penyewa = request()->input('penyewa');
+        $jenis_penyewa = request()->input('jenis_penyewa');
         $status_pembayaran = request()->input('status_pembayaran');
 
         $pembayaran = Pembayaran::when($dari_tanggal && $sampai_tanggal, function ($query) use ($dari_tanggal, $sampai_tanggal) {
@@ -39,6 +40,9 @@ class MainController extends Controller
         })
             ->when($penyewa, function ($query) use ($penyewa) {
                 $query->where('penyewa_id', $penyewa);
+            })
+            ->when($jenis_penyewa, function ($query) use ($jenis_penyewa) {
+                $query->where('jenis_penyewa', $jenis_penyewa);
             })
             ->when($status_pembayaran != "", function ($query) use ($status_pembayaran) {
                 $query->where('status_pembayaran', $status_pembayaran);
@@ -63,7 +67,7 @@ class MainController extends Controller
                 $status_pembayaran = 'Belum Lunas';
 
                 $btnbayar = '
-                    <button type="button" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Bayar Tagihan" style="width: 40px;" onclick="openModalPay(\'' . $row->penyewa->nim . '\', \'' . $row->no_invoice . '\', \'' . intval($hutang) . '\')">
+                    <button type="button" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Bayar Tagihan" style="width: 40px;" onclick="openModalPay(\'' . ($row->penyewa->nim ?? $row->penyewa->noktp) . '\', \'' . $row->no_invoice . '\', \'' . intval($hutang) . '\')">
                         <i class="fa fa-credit-card"></i>
                     </button>
                 ';
@@ -105,6 +109,7 @@ class MainController extends Controller
             $output[] = [
                 'aksi' => $aksi,
                 'tanggal_dibuat' => Carbon::parse($row->created_at)->format('d/m/Y H:i:s'),
+                'jenis_penyewa' => $row->jenis_penyewa,
                 'jatuh_tempo' => $jatuh_tempo,
                 'no_invoice' => $row->no_invoice,
                 'status_pembayaran' => $status_pembayaran,
@@ -393,11 +398,18 @@ class MainController extends Controller
         $jumlah_bulan = (int) request()->input('jumlah_bulan');
         $penyewa = request()->input('penyewa');
         $kamar = request()->input('kamar');
+        $jenis_penyewa_mahasiswa = request()->input('jenis_penyewa_mahasiswa');
+        $nama_lengkap = request()->input('nama_lengkap');
+        $no_ktp = request()->input('no_ktp');
         $harga_asrama = request()->input('harga_asrama');
         $potongan_harga_asrama = request()->input('potongan_harga_asrama');
-        // $catering = request()->input('catering');
-        // $harga_catering = request()->input('harga_catering');
-        // $potongan_harga_catering = request()->input('potongan_harga_catering');
+
+        if (Penyewa::where('noktp', $no_ktp)->where('status_asrama', 1)->exists()) {
+            DB::rollBack();
+            return back()
+                ->withInput()
+                ->with('messageFailed', 'Penyewa sedang aktif menyewa!');
+        }
 
         $validator = Validator::make(request()->all(), [
             'tanggal_masuk' => ['required'],
@@ -405,19 +417,19 @@ class MainController extends Controller
             'jumlah_bulan' => ['required', 'integer', 'min:1'],
 
             'penyewa' => ['required', 'exists:penyewa,id'],
+
             'kamar' => ['required', 'exists:kamar,id'],
+
+            // Wajib diisi JIKA jenis_penyewa_mahasiswa == 'Y'
+            'penyewa'                => ['required_if:jenis_penyewa_mahasiswa,Y', 'nullable', 'exists:penyewa,id'],
+
+            // Wajib diisi JIKA jenis_penyewa_mahasiswa == 'T'
+            'nama_lengkap'           => ['required_if:jenis_penyewa_mahasiswa,T', 'nullable', 'string', 'max:255'],
+            'no_ktp'                 => ['required_if:jenis_penyewa_mahasiswa,T', 'nullable', 'numeric', 'digits:16'],
 
             'harga_asrama' => ['required', 'exists:harga,id'],
 
             'potongan_harga_asrama' => ['nullable'],
-
-            // 'catering' => ['required', 'in:Y,T'],
-
-            // 'harga_catering' => [
-            //     'required_if:catering,Y',
-            //     'nullable',
-            //     'exists:harga,id',
-            // ],
         ], [
             'tanggal_masuk.required' => 'Kolom tanggal masuk wajib diisi',
             'tanggal_masuk.date' => 'Format tanggal tidak valid',
@@ -426,20 +438,20 @@ class MainController extends Controller
             'jumlah_bulan.integer' => 'Harus berupa angka',
             'jumlah_bulan.min' => 'Minimal 1 bulan',
 
-            'penyewa.required' => 'Penyewa wajib dipilih',
+            'penyewa.required_if'             => 'Penyewa wajib dipilih untuk mahasiswa',
+            'penyewa.exists'                  => 'Penyewa tidak valid',
             'penyewa.exists' => 'Penyewa tidak valid',
 
             'kamar.required' => 'Kamar wajib dipilih',
             'kamar.exists' => 'Kamar tidak valid',
 
+            'nama_lengkap.required_if'        => 'Nama lengkap wajib diisi untuk non-mahasiswa',
+            'no_ktp.required_if'              => 'Nomor KTP wajib diisi untuk non-mahasiswa',
+            'no_ktp.numeric'                  => 'Nomor KTP harus berupa angka',
+            'no_ktp.digits'                   => 'Nomor KTP harus persis 16 digit',
+
             'harga_asrama.required' => 'Harga asrama wajib dipilih',
             'harga_asrama.exists' => 'Harga asrama tidak valid',
-
-            // 'catering.required' => 'Pilih catering',
-            // 'catering.in' => 'Pilihan catering tidak valid',
-
-            // 'harga_catering.required_if' => 'Harga catering wajib dipilih jika catering aktif',
-            // 'harga_catering.exists' => 'Harga catering tidak valid',
         ]);
 
 
@@ -452,6 +464,7 @@ class MainController extends Controller
 
         try {
             DB::beginTransaction();
+
             $data_penyewa = Penyewa::where('id', $penyewa)->first();
             // generate no invoice
             $tanggal = Carbon::now();
@@ -472,7 +485,6 @@ class MainController extends Controller
             // end generate no invoice
 
             $data_harga_asrama = Harga::where('id', $harga_asrama)->first();
-            // $data_harga_catering = Harga::where('id', $harga_catering)->first();
 
             // tanggal masuk
             $tgl_masuk = Carbon::createFromFormat('d/m/Y', $tanggal_masuk);
@@ -495,31 +507,6 @@ class MainController extends Controller
                     ->with('messageFailed', 'Potongan harga asrama tidak valid!!');
             }
 
-            // $harga_per_bulan_catering = 0;
-            // $total_tagihan_catering = 0;
-            // $potongan_catering = 0;
-            // if ($catering == "Y") {
-            //     // catering
-            //     $harga_per_bulan_catering = $data_harga_catering->harga;
-            //     $total_tagihan_catering = $harga_per_bulan_catering * $jumlah_bulan;
-            //     $potongan_catering = $potongan_harga_catering ? str_replace('.', '', $potongan_harga_catering) : 0;
-
-            //     if ($potongan_catering > $total_tagihan_catering) {
-            //         DB::rollBack();
-            //         return back()
-            //             ->withInput()
-            //             ->with('messageFailed', 'Potongan harga catering tidak boleh melebihi total tagihan catering!');
-            //     } else if ($potongan_catering < 0) {
-            //         DB::rollBack();
-            //         return back()
-            //             ->withInput()
-            //             ->with('messageFailed', 'Potongan harga catering tidak valid!!');
-            //     }
-            // }
-
-            // total
-            // $total_tagihan = $total_tagihan_asrama + $total_tagihan_catering;
-            // $total_potongan_harga = $potongan_asrama + $potongan_catering;
             $total_tagihan = $total_tagihan_asrama;
             $total_potongan_harga = $potongan_asrama;
             if ($total_potongan_harga >= $total_tagihan) {
@@ -528,12 +515,33 @@ class MainController extends Controller
                 $status = 'pending';
             }
 
+            $jenis_penyewa = "non-mahasiswa";
+            if ($jenis_penyewa_mahasiswa == "Y") {
+                $jenis_penyewa = "mahasiswa";
+            } else {
+                $jenis_penyewa = "non-mahasiswa";
+
+                if (!Penyewa::where('noktp', $no_ktp)->exists()) {
+                    Penyewa::create([
+                        'jenis_penyewa' => $jenis_penyewa,
+                        'namalengkap' => $nama_lengkap,
+                        'noktp' => $no_ktp,
+                        'operator_id' => auth()->id(),
+                    ]);
+
+                    $data_penyewa = Penyewa::where('noktp', $no_ktp)->first();
+                }
+            }
+
             $post = Pembayaran::create([
                 'no_invoice' => $no_invoice,
+                'jenis_penyewa' => $jenis_penyewa,
                 'tanggal_masuk' => $tgl_masuk,
                 'tanggal_keluar' => $tgl_keluar,
                 'durasi' => $jumlah_bulan,
                 'penyewa_id' => $data_penyewa->id,
+                'nama_lengkap' => $data_penyewa->namalengkap,
+                'no_ktp' => $data_penyewa->noktp,
                 'nama_bill_to' => $data_penyewa->nama_bill_to,
                 'kamar_id' => $kamar,
                 'total_tagihan' => $total_tagihan,
@@ -573,36 +581,6 @@ class MainController extends Controller
                     ]);
                 }
 
-                // if ($catering == "Y") {
-                //     $postcatering = Pembayarandetail::create([
-                //         'no_invoice' => $no_invoice,
-                //         'harga_id' => $harga_catering,
-                //         'jenissewa' => 'catering',
-                //         'harga' => $harga_per_bulan_catering,
-                //         'qty' => $jumlah_bulan,
-                //         'jumlah_pembayaran' => $total_tagihan_catering,
-                //         'potongan_harga' => $potongan_catering,
-                //     ]);
-
-                //     Penyewa::where('id', $data_penyewa->id)->update([
-                //         'status_catering' => 1,
-                //     ]);
-
-                //     Pembayaran::where('id', $post->id)->update([
-                //         'status_catering' => 1,
-                //     ]);
-
-                //     // potongan harga catering
-                //     if ($potongan_catering > 0) {
-                //         Potonganharga::create([
-                //             'no_invoice' => $no_invoice,
-                //             'pembayaran_detail_id' => $postcatering->id,
-                //             'potongan_harga' => $potongan_catering,
-                //             'operator_id' => auth()->user()->id
-                //         ]);
-                //     }
-                // }
-
                 Kamar::where('id', $kamar)->increment('jumlah_penyewa');
             }
 
@@ -613,166 +591,6 @@ class MainController extends Controller
             echo $e->getMessage();
         }
     }
-    // tambah catering
-    // public function tambahcatering()
-    // {
-    //     $data = [
-    //         'judul' => 'Buat Tagihan Catering',
-    //     ];
-
-    //     return view('contents.dashboard.tagihan.tambahcatering', $data);
-    // }
-    // public function postcatering()
-    // {
-    //     $tanggal_masuk = request()->input('tanggal_masuk');
-    //     $jumlah_bulan = (int) request()->input('jumlah_bulan');
-    //     $penyewa = request()->input('penyewa');
-    //     $harga_catering = request()->input('harga_catering');
-    //     $potongan_harga_catering = request()->input('potongan_harga_catering');
-
-    //     $validator = Validator::make(request()->all(), [
-    //         'tanggal_masuk' => ['required'],
-
-    //         'jumlah_bulan' => ['required', 'integer', 'min:1'],
-
-    //         'penyewa' => ['required', 'exists:penyewa,id'],
-
-    //         'harga_catering' => ['required', 'exists:harga,id'],
-
-    //         'potongan_harga_catering' => ['nullable'],
-    //     ], [
-    //         'tanggal_masuk.required' => 'Kolom tanggal masuk wajib diisi',
-    //         'tanggal_masuk.date' => 'Format tanggal tidak valid',
-
-    //         'jumlah_bulan.required' => 'Jumlah bulan wajib diisi',
-    //         'jumlah_bulan.integer' => 'Harus berupa angka',
-    //         'jumlah_bulan.min' => 'Minimal 1 bulan',
-
-    //         'penyewa.required' => 'Penyewa wajib dipilih',
-    //         'penyewa.exists' => 'Penyewa tidak valid',
-
-    //         'harga_catering.required' => 'Harga catering wajib dipilih',
-    //         'harga_catering.exists' => 'Harga catering tidak valid',
-    //     ]);
-
-
-    //     if ($validator->fails()) {
-    //         return redirect()
-    //             ->back()
-    //             ->withErrors($validator)
-    //             ->withInput();
-    //     }
-
-    //     try {
-    //         DB::beginTransaction();
-
-    //         $data_penyewa = Penyewa::where('id', $penyewa)->first();
-
-    //         $pembayaran = Pembayaran::where('penyewa_id', $penyewa)->latest()->first();
-
-    //         // generate no invoice
-    //         $tanggal = Carbon::now();
-    //         $year  = $tanggal->format('y');
-    //         $month = $tanggal->format('m');
-    //         $day   = $tanggal->format('d');
-    //         $lastPn = Pembayaran::whereDate('created_at', $tanggal->toDateString())
-    //             ->lockForUpdate()
-    //             ->orderBy('id', 'desc')
-    //             ->first();
-    //         if ($lastPn) {
-    //             $lastNumber = intval(substr($lastPn->no_invoice, -3));
-    //             $newNumber  = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-    //         } else {
-    //             $newNumber = '001';
-    //         }
-    //         $no_invoice = $year . '' . $month . '' . $day . '-' . $newNumber;
-
-    //         // dd($no_invoice);
-    //         $data_harga_catering = Harga::where('id', $harga_catering)->first();
-
-    //         // tanggal masuk
-    //         $tgl_masuk = Carbon::createFromFormat('d/m/Y', $tanggal_masuk);
-    //         $tgl_keluar = $tgl_masuk->copy()->addMonthsNoOverflow($jumlah_bulan);
-
-    //         // catering
-    //         $harga_per_bulan_catering = $data_harga_catering->harga;
-    //         $total_tagihan_catering = $harga_per_bulan_catering * $jumlah_bulan;
-    //         $potongan_catering = $potongan_harga_catering ? str_replace('.', '', $potongan_harga_catering) : 0;
-
-    //         if ($potongan_catering > $total_tagihan_catering) {
-    //             DB::rollBack();
-    //             return back()
-    //                 ->withInput()
-    //                 ->with('messageFailed', 'Potongan harga catering tidak boleh melebihi total tagihan catering!');
-    //         } else if ($potongan_catering < 0) {
-    //             DB::rollBack();
-    //             return back()
-    //                 ->withInput()
-    //                 ->with('messageFailed', 'Potongan harga catering tidak valid!!');
-    //         }
-
-    //         // total
-    //         $total_tagihan = $total_tagihan_catering;
-    //         $total_potongan_harga = $potongan_catering;
-
-    //         if ($total_potongan_harga >= $total_tagihan) {
-    //             $status = 'completed';
-    //         } else {
-    //             $status = 'pending';
-    //         }
-
-    //         $post = Pembayaran::create([
-    //             'no_invoice' => $no_invoice,
-    //             'tanggal_masuk' => $tgl_masuk,
-    //             'tanggal_keluar' => $tgl_keluar,
-    //             'durasi' => $jumlah_bulan,
-    //             'penyewa_id' => $data_penyewa->id,
-    //             'nama_bill_to' => $data_penyewa->nama_bill_to,
-    //             'kamar_id' => $pembayaran->kamar_id,
-    //             'total_tagihan' => $total_tagihan,
-    //             'total_potongan_harga' => $total_potongan_harga,
-    //             'total_bayar' => 0,
-    //             'status_pembayaran' => $status,
-    //             'operator_id' => auth()->user()->id
-    //         ]);
-
-    //         if ($post) {
-    //             $postcatering = Pembayarandetail::create([
-    //                 'no_invoice' => $no_invoice,
-    //                 'harga_id' => $harga_catering,
-    //                 'jenissewa' => 'catering',
-    //                 'harga' => $harga_per_bulan_catering,
-    //                 'qty' => $jumlah_bulan,
-    //                 'jumlah_pembayaran' => $total_tagihan_catering,
-    //                 'potongan_harga' => $potongan_catering,
-    //             ]);
-
-    //             Penyewa::where('id', $data_penyewa->id)->update([
-    //                 'status_catering' => 1,
-    //             ]);
-
-    //             Pembayaran::where('id', $post->id)->update([
-    //                 'status_catering' => 1,
-    //             ]);
-
-    //             // potongan harga catering
-    //             if ($potongan_catering > 0) {
-    //                 Potonganharga::create([
-    //                     'no_invoice' => $no_invoice,
-    //                     'pembayaran_detail_id' => $postcatering->id,
-    //                     'potongan_harga' => $potongan_catering,
-    //                     'operator_id' => auth()->user()->id
-    //                 ]);
-    //             }
-
-    //             DB::commit();
-    //             return redirect()->back()->with('messageSuccess', 'Tagihan berhasil ditambahkan!');
-    //         }
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         echo $e->getMessage();
-    //     }
-    // }
     // invoice
     public function invoice($no_invoice)
     {

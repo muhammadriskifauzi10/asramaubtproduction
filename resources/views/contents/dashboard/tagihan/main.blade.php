@@ -56,17 +56,17 @@
             <div class="card-body">
                 <div class="row justify-content-center">
                     {{-- dari tanggal --}}
-                    <div class="col-xl-3 mb-3">
+                    <div class="col-xl-2 mb-3">
                         <label for="dari_tanggal" class="form-label fw-bold">Dari Tanggal Masuk</label>
                         <input type="date" name="dari_tanggal" class="form-control" id="dari_tanggal">
                     </div>
                     {{-- sampai tanggal --}}
-                    <div class="col-xl-3 mb-3">
+                    <div class="col-xl-2 mb-3">
                         <label for="sampai_tanggal" class="form-label fw-bold">Sampai Tanggal Masuk</label>
                         <input type="date" name="sampai_tanggal" class="form-control" id="sampai_tanggal">
                     </div>
                     {{-- penyewa --}}
-                    <div class="col-xl-3 mb-3">
+                    <div class="col-xl-2 mb-3">
                         <label for="penyewa" class="form-label fw-bold">Penyewa</label>
                         <select class="form-select form-select-2" name="penyewa" id="penyewa" style="width: 100%;">
                             <option value="">Filter Penyewa</option>
@@ -75,8 +75,18 @@
                             @endforeach
                         </select>
                     </div>
+                    {{-- jenis penyewa --}}
+                    <div class="col-xl-2 mb-3">
+                        <label for="jenis_penyewa" class="form-label fw-bold">Jenis Penyewa</label>
+                        <select class="form-select form-select-2" name="jenis_penyewa" id="jenis_penyewa"
+                            style="width: 100%;">
+                            <option value="">Filter Jenis Penyewa</option>
+                            <option value="mahasiswa">Mahasiswa</option>
+                            <option value="non-mahasiswa">Non Mahasiswa</option>
+                        </select>
+                    </div>
                     {{-- status pembayaran --}}
-                    <div class="col-xl-3 mb-3">
+                    <div class="col-xl-2 mb-3">
                         <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
                         <select class="form-select form-select-2" name="status_pembayaran" id="status_pembayaran"
                             style="width: 100%;">
@@ -106,6 +116,7 @@
                                 <tr>
                                     <th scope="col" width="50"></th>
                                     <th scope="col">TANGGAL DIBUAT</th>
+                                    <th scope="col">JENIS PENYEWA</th>
                                     <th scope="col">JATUH TEMPO</th>
                                     <th scope="col">NAMA</th>
                                     <th scope="col">NIM</th>
@@ -164,6 +175,7 @@
                         d.dari_tanggal = $("#dari_tanggal").val();
                         d.sampai_tanggal = $("#sampai_tanggal").val();
                         d.penyewa = $("#penyewa").val();
+                        d.jenis_penyewa = $("#jenis_penyewa").val();
                         d.status_pembayaran = $("#status_pembayaran").val();
                     },
                 },
@@ -172,6 +184,9 @@
                     },
                     {
                         data: "tanggal_dibuat",
+                    },
+                    {
+                        data: "jenis_penyewa",
                     },
                     {
                         data: "jatuh_tempo",
@@ -285,7 +300,7 @@
                 // },
             });
 
-            $("#dari_tanggal, #sampai_tanggal, #penyewa, #status_pembayaran").change(function() {
+            $("#dari_tanggal, #sampai_tanggal, #penyewa, #jenis_penyewa, #status_pembayaran").change(function() {
                 table.ajax.reload();
             });
         });

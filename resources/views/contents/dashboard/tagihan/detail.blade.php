@@ -61,7 +61,7 @@
                 <a href="javascript:void(0)"
                     class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
                     data-bs-toggle="tooltip" title="Bayar" style="width: 100px;"
-                    onclick="openModalPay({{ $tagihan->penyewa->nim }}, '{{ $tagihan->no_invoice }}', {{ $piutang }})">
+                    onclick="openModalPay({{ $tagihan->penyewa->nim ?? $tagihan->penyewa->noktp }}, '{{ $tagihan->no_invoice }}', {{ $piutang }})">
                     <i class="fa fa-credit-card me-1"></i> Bayar
                 </a>
             </div>
@@ -82,6 +82,11 @@
                                     <td>NAMA</td>
                                     <td width="20" class="text-right">:</td>
                                     <td>{{ $tagihan->penyewa->namalengkap }}</td>
+                                </tr>
+                                <tr>
+                                    <td>NO KTP</td>
+                                    <td width="20" class="text-right">:</td>
+                                    <td>{{ $tagihan->penyewa->noktp }}</td>
                                 </tr>
                                 <tr>
                                     <td>NIM</td>
@@ -906,24 +911,7 @@
 
         async function openModalPay(nim, no_invoice, total_tagihan) {
             $("#universalModalContent").addClass("modal-lg")
-            // // ambil data bank dari API
-            // let banks = [];
-            // try {
-            //     let res = await fetch('https://sia.ubtsu.ac.id/api/bank');
-            //     banks = await res.json();
-            // } catch (error) {
-            //     console.error('Gagal ambil data bank:', error);
-            // }
-
-            // const priorityId = 3;
-            // banks.sort((a, b) => {
-            //     if (a.id === priorityId) return -1;
-            //     if (b.id === priorityId) return 1;
-            //     return 0;
-            // });
-
-            // let bankOptions = '';
-
+           
             // metode pembayaran
             const defaultBankId = 2;
             let banks = [];
