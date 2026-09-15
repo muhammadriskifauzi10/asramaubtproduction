@@ -27,7 +27,7 @@ class MainController extends Controller
     {
         $dari_tanggal = request()->input('dari_tanggal');
         $sampai_tanggal = request()->input('sampai_tanggal');
-        $nim = request()->input('nim');
+        $penyewa_id = request()->input('penyewa_id');
         $metode_pembayaran = request()->input('metode_pembayaran');
         $status = request()->input('status');
 
@@ -35,8 +35,8 @@ class MainController extends Controller
             $query->whereDate('tanggal_transaksi', '>=', $dari_tanggal)
                 ->whereDate('tanggal_transaksi', '<=', $sampai_tanggal);
         })
-            ->when($nim, function ($query) use ($nim) {
-                $query->where('nim', $nim);
+            ->when($penyewa_id, function ($query) use ($penyewa_id) {
+                $query->where('penyewa_id', $penyewa_id);
             })
             ->when($metode_pembayaran, function ($query) use ($metode_pembayaran) {
                 $query->where('metode_pembayaran', $metode_pembayaran);
@@ -105,14 +105,14 @@ class MainController extends Controller
     public function create()
     {
         $validator = Validator::make(request()->all(), [
-            'nim' => ['required', 'exists:penyewa,nim'],
+            'penyewa_id' => ['required', 'exists:penyewa,id'],
             'tanggal_bayar' => ['required'],
             'jumlah_uang' => ['required'],
             'file_bukti' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'metode_pembayaran' => ['required'],
         ], [
-            'nim.required' => 'Penyewa wajib dipilih',
-            'nim.exists' => 'Penyewa tidak valid',
+            'penyewa_id.required' => 'Penyewa wajib dipilih',
+            'penyewa_id.exists' => 'Penyewa tidak valid',
             'tanggal_bayar.required' => 'Kolom tanggal bayar referensi wajib diisi',
             'jumlah_uang.required' => 'Kolom jumlah uang wajib diisi',
             'file_bukti.file' => 'File bukti tidak valid',
@@ -130,7 +130,7 @@ class MainController extends Controller
         try {
             DB::beginTransaction();
 
-            $nim = request()->input('nim');
+            $penyewa_id = request()->input('penyewa_id');
             $tanggal_bayar = request()->input('tanggal_bayar');
             $tgl_bayar = Carbon::createFromFormat('d/m/Y H:i', $tanggal_bayar);
             $jumlah_uang = request()->input('jumlah_uang') ? str_replace('.', '', request()->input('jumlah_uang')) : 0;
@@ -168,7 +168,7 @@ class MainController extends Controller
             }
 
             $post = Deposit::create([
-                'nim' => $nim,
+                'penyewa_id' => $penyewa_id,
                 'no_transaksi' => 'D' . $no_transaksi,
                 'tanggal_transaksi' => $tgl_bayar,
                 'jumlah_uang' => $jumlah_uang,
@@ -180,7 +180,7 @@ class MainController extends Controller
 
             if ($post) {
                 Transaksi::create([
-                    'nim' => $nim,
+                    'penyewa_id' => $penyewa_id,
                     'no_transaksi' => 'D' . $no_transaksi,
                     'tanggal_transaksi' => $tgl_bayar,
                     'jumlah_uang' => $jumlah_uang,
@@ -210,10 +210,10 @@ class MainController extends Controller
                 DB::beginTransaction();
 
                 $no_invoice = request()->input('no_invoice');
-                $nim = request()->input('nim');
+                $penyewa_id = request()->input('penyewa_id');
                 $deposit_id = request()->input('deposit_id');
 
-                $deposit = Deposit::where('nim', $nim)->where('id', $deposit_id)->first();
+                $deposit = Deposit::where('penyewa_id', $penyewa_id)->where('id', $deposit_id)->first();
                 $pembayaran = Pembayaran::where('no_invoice', $no_invoice)->first();
                 $piutang = ($pembayaran->total_tagihan - $pembayaran->total_potongan_harga) - $pembayaran->total_bayar;
                 $dari_deposit = (int) $deposit->saldo;
@@ -242,7 +242,7 @@ class MainController extends Controller
 
                 Depositpembayaran::create([
                     'deposit_id' => $deposit_id,
-                    'nim' => $nim,
+                    'penyewa_id' => $penyewa_id,
                     'no_invoice' => $no_invoice,
                     'jumlah_digunakan' => $deposit_terpakai,
                     'operator_id' => auth()->user()->id
@@ -336,7 +336,7 @@ class MainController extends Controller
 
                 $post = Transaksi::create([
                     'parent_id' => $transaksi->id,
-                    'nim' => $deposit->nim,
+                    'penyewa_id' => $deposit->penyewa_id,
                     'no_transaksi' => 'R' . $no_refund,
                     'tanggal_transaksi' => $tgl_refund,
                     'jumlah_uang' => -$jumlah_uang,
@@ -433,7 +433,7 @@ class MainController extends Controller
                 Depositpembayaran::create([
                     'deposit_id' => $deposit_id,
                     'parent_id' => $depositpembayaran->id,
-                    'nim' => $depositpembayaran->nim,
+                    'penyewa_id' => $depositpembayaran->penyewa_id,
                     'no_invoice' => $depositpembayaran->no_invoice,
                     'jumlah_digunakan' => -$jumlah_uang,
                     'jenis_pembayaran' => 'Pengembalian',
@@ -459,9 +459,9 @@ class MainController extends Controller
         }
     }
     // shorcut
-    public function getbynim($nim)
+    public function getbypenyewa_id($id)
     {
-        $deposit = Deposit::where('nim', $nim)
+        $deposit = Deposit::where('penyewa_id', $id)
             ->where('status', 1)
             ->select('id', 'no_transaksi', 'saldo')
             ->get();

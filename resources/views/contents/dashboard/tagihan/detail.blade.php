@@ -61,7 +61,7 @@
                 <a href="javascript:void(0)"
                     class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
                     data-bs-toggle="tooltip" title="Bayar" style="width: 100px;"
-                    onclick="openModalPay({{ $tagihan->penyewa->nim ?? $tagihan->penyewa->noktp }}, '{{ $tagihan->no_invoice }}', {{ $piutang }})">
+                    onclick="openModalPay({{ $tagihan->penyewa->id ?? $tagihan->penyewa->noktp }}, '{{ $tagihan->no_invoice }}', {{ $piutang }})">
                     <i class="fa fa-credit-card me-1"></i> Bayar
                 </a>
             </div>
@@ -311,23 +311,23 @@
                                         $no = 1;
                                     @endphp
                                     @forelse (\App\Models\Transaksi::where('no_invoice', $tagihan->no_invoice)
-                                                                                                                                                                                                                                             ->orderByRaw("
-                                                                                                                                                                                                                                                    COALESCE(
-                                                                                                                                                                                                                                                        (SELECT parent.no_transaksi
-                                                                                                                                                                                                                                                            FROM transaksi AS parent
-                                                                                                                                                                                                                                                            WHERE parent.id = transaksi.parent_id)
+                                                                                                                                                                                                                                                                 ->orderByRaw("
+                                                                                                                                                                                                                                                                        COALESCE(
+                                                                                                                                                                                                                                                                            (SELECT parent.no_transaksi
+                                                                                                                                                                                                                                                                                FROM transaksi AS parent
+                                                                                                                                                                                                                                                                                WHERE parent.id = transaksi.parent_id)
     ,
-                                                                                                                                                                                                                                                        transaksi.no_transaksi
-                                                                                                                                                                                                                                                    ) DESC
-                                                                                                                                                                                                                                                ")
-                                                                                                                                                                                                                                                ->orderByRaw("
-                                                                                                                                                                                                                                                    CASE
-                                                                                                                                                                                                                                                        WHEN transaksi.parent_id IS NULL THEN 0
-                                                                                                                                                                                                                                                        ELSE 1
-                                                                                                                                                                                                                                                    END ASC
-                                                                                                                                                                                                                                                ")
-                                                                                                                                                                                                                                                ->orderBy('created_at', 'DESC')
-                                                                                                                                                                                                                                                ->get() as $row)
+                                                                                                                                                                                                                                                                            transaksi.no_transaksi
+                                                                                                                                                                                                                                                                        ) DESC
+                                                                                                                                                                                                                                                                    ")
+                                                                                                                                                                                                                                                                    ->orderByRaw("
+                                                                                                                                                                                                                                                                        CASE
+                                                                                                                                                                                                                                                                            WHEN transaksi.parent_id IS NULL THEN 0
+                                                                                                                                                                                                                                                                            ELSE 1
+                                                                                                                                                                                                                                                                        END ASC
+                                                                                                                                                                                                                                                                    ")
+                                                                                                                                                                                                                                                                    ->orderBy('created_at', 'DESC')
+                                                                                                                                                                                                                                                                    ->get() as $row)
                                         @php
                                             $refund = \App\Models\Transaksi::where('parent_id', $row->id)->sum(
                                                 'jumlah_uang',
@@ -494,85 +494,6 @@
     <script>
         $(document).ready(function() {});
 
-        // function cancelItem(no_invoice, id, kategori) {
-        //     Swal.fire({
-        //         title: "Batalkan Item?",
-        //         text: `Yakin ingin batalkan Item ${kategori}?`,
-        //         icon: "warning",
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#25d366',
-        //         cancelButtonColor: '#cc0000',
-        //         confirmButtonText: 'Ya, batalkan!',
-        //         cancelButtonText: 'Batal!'
-        //     }).then((result) => {
-
-        //         if (!result.isConfirmed) return;
-        //         var formData = new FormData();
-        //         formData.append("_token", '{{ csrf_token() }}');
-        //         formData.append("no_invoice", no_invoice);
-        //         formData.append("id", id);
-
-        //         $.ajax({
-        //             url: "{{ route('tagihan.cancelitem') }}",
-        //             type: "POST",
-        //             data: formData,
-        //             processData: false,
-        //             contentType: false,
-        //             beforeSend: function() {
-        //                 Swal.fire({
-        //                     title: 'Processing...',
-        //                     text: 'Mohon tunggu...',
-        //                     allowOutsideClick: false,
-        //                     didOpen: () => Swal.showLoading()
-        //                 });
-        //             },
-        //             success: function(response) {
-        //                 Swal.close();
-
-        //                 if (response.status == 200) {
-        //                     Swal.fire({
-        //                         title: "Success",
-        //                         icon: response.icon,
-        //                         text: response.message,
-        //                         timer: 5000,
-        //                         showConfirmButton: false
-        //                     });
-
-        //                     setTimeout(() => {
-        //                         window.location.reload()
-        //                     }, 1000);
-        //                 } else {
-        //                     Swal.fire({
-        //                         icon: response.icon,
-        //                         text: response.message
-        //                     });
-
-        //                 }
-        //             },
-        //             error: function(xhr) {
-        //                 Swal.close();
-
-        //                 let message = 'Terjadi kesalahan';
-        //                 let icon = 'error';
-
-        //                 if (xhr.responseJSON) {
-        //                     if (xhr.responseJSON.message) {
-        //                         message = xhr.responseJSON.message;
-        //                     }
-
-        //                     if (xhr.responseJSON.icon) {
-        //                         icon = xhr.responseJSON.icon;
-        //                     }
-        //                 }
-
-        //                 Swal.fire({
-        //                     icon: icon,
-        //                     text: message
-        //                 });
-        //             }
-        //         });
-        //     });
-        // }
         $(document).on('click', '.lihat-detail', function() {
             var no_transaksi = $(this).data('no-transaksi');
 
@@ -909,9 +830,9 @@
             });
         }
 
-        async function openModalPay(nim, no_invoice, total_tagihan) {
+        async function openModalPay(penyewa_id, no_invoice, total_tagihan) {
             $("#universalModalContent").addClass("modal-lg")
-           
+
             // metode pembayaran
             const defaultBankId = 2;
             let banks = [];
@@ -965,7 +886,7 @@
             let depositOptions = `<option value="">Pilih Deposit</option>`;
             try {
                 const response = await $.ajax({
-                    url: `/deposit/get/${nim}`,
+                    url: `/deposit/get/${penyewa_id}`,
                     type: 'GET',
                     dataType: 'json',
                     headers: {
@@ -1078,7 +999,7 @@
                                         ${depositOptions}
                                     </select>
 
-                                    <button type="button" class="btn btn-primary" onclick="btnGunakanDeposit(${nim},
+                                    <button type="button" class="btn btn-primary" onclick="btnGunakanDeposit(${penyewa_id},
                                     '${no_invoice}')">
                                         <i class="fa fa-check me-1"></i> Gunakan
                                     </button>
@@ -1219,7 +1140,7 @@
             });
         }
 
-        function btnGunakanDeposit(nim, no_invoice) {
+        function btnGunakanDeposit(penyewa_id, no_invoice) {
             if ($("#deposit").val()) {
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
@@ -1249,7 +1170,7 @@
 
                         const formData = new FormData();
                         formData.append('_token', '{{ csrf_token() }}');
-                        formData.append('nim', nim);
+                        formData.append('penyewa_id', penyewa_id);
                         formData.append('no_invoice', no_invoice);
                         formData.append('deposit_id', $("#deposit").val());
 

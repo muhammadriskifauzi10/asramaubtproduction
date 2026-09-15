@@ -65,14 +65,13 @@
                         <label for="sampai_tanggal" class="form-label fw-bold">Sampai Tanggal</label>
                         <input type="date" name="sampai_tanggal" class="form-control" id="sampai_tanggal">
                     </div>
-                    {{-- pilih penyewa --}}
+                    {{-- penyewa --}}
                     <div class="col-xl-2 mb-3">
-                        <label for="nim" class="form-label fw-bold">Penyewa</label>
-                        <select class="form-select form-select-2" name="nim" id="nim" style="width: 100%;">
+                        <label for="penyewa_id" class="form-label fw-bold">Penyewa</label>
+                        <select class="form-select form-select-2" name="penyewa_id" id="penyewa_id" style="width: 100%;">
                             <option value="">Filter Penyewa</option>
-                            @foreach (\App\Models\Penyewa::select('namalengkap', 'nim')->distinct()->get() as $row)
-                                <option value="{{ $row->nim }}">Nama lengkap:
-                                    {{ $row->namalengkap }} | NIM: {{ $row->nim }}</option>
+                            @foreach (\App\Models\Penyewa::all() as $row)
+                                <option value="{{ $row->id }}">{{ $row->namalengkap }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -156,7 +155,7 @@
                     data: function(d) {
                         d.dari_tanggal = $("#dari_tanggal").val();
                         d.sampai_tanggal = $("#sampai_tanggal").val();
-                        d.nim = $("#nim").val();
+                        d.penyewa_id = $("#penyewa_id").val();
                         d.metode_pembayaran = $("#metode_pembayaran").val();
                         d.status = $("#status").val();
                     },
@@ -225,7 +224,7 @@
                 },
             });
 
-            $("#dari_tanggal, #sampai_tanggal, #nim, #metode_pembayaran, #status").change(function() {
+            $("#dari_tanggal, #sampai_tanggal, #penyewa_id, #metode_pembayaran, #status").change(function() {
                 table.ajax.reload();
             });
         });

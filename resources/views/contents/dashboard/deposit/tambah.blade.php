@@ -65,18 +65,19 @@
                                 <label for="nim" class="col-xl-3 col-form-label fw-bold">Penyewa <sup
                                         class="text-danger">*</sup></label>
                                 <div class="col-xl-9">
-                                    <select name="nim"
-                                        class="form-control form-select-2 @error('nim') is-invalid @enderror" id="nim"
+                                    <select name="penyewa_id"
+                                        class="form-control form-select-2 @error('penyewa_id') is-invalid @enderror" id="penyewa_id"
                                         style="width: 100%">
                                         <option value="">Pilih Penyewa</option>
                                         @foreach (\App\Models\Penyewa::all() as $row)
-                                            <option value="{{ $row->nim }}"
-                                                {{ old('nim') == $row->nim ? 'selected' : '' }}>Nama lengkap:
-                                                {{ $row->namalengkap }} | NIM: {{ $row->nim }}
+                                            <option value="{{ $row->id }}"
+                                                {{ old('penyewa_id') == $row->id ? 'selected' : '' }}>
+                                                Jenis Penyewa: {{ $row->jenis_penyewa }} | Nama lengkap:
+                                                {{ $row->namalengkap }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('nim')
+                                    @error('penyewa_id')
                                         <div class="invalid-feedback">
                                             {{ $message }}
                                         </div>

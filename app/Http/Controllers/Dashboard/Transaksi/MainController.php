@@ -27,7 +27,7 @@ class MainController extends Controller
         $dari_tanggal = request()->input('dari_tanggal');
         $sampai_tanggal = request()->input('sampai_tanggal');
         $no_invoice = request()->input('no_invoice');
-        $nim = request()->input('nim');
+        $penyewa_id = request()->input('penyewa_id');
         $metode_pembayaran = request()->input('metode_pembayaran');
         $jenis_pembayaran = request()->input('jenis_pembayaran');
 
@@ -38,8 +38,8 @@ class MainController extends Controller
             ->when($no_invoice, function ($query) use ($no_invoice) {
                 $query->where('no_invoice', $no_invoice);
             })
-            ->when($nim, function ($query) use ($nim) {
-                $query->where('nim', $nim);
+            ->when($penyewa_id, function ($query) use ($penyewa_id) {
+                $query->where('penyewa_id', $penyewa_id);
             })
             ->when($metode_pembayaran, function ($query) use ($metode_pembayaran) {
                 $query->where('metode_pembayaran', $metode_pembayaran);
@@ -47,22 +47,6 @@ class MainController extends Controller
             ->when($jenis_pembayaran, function ($query) use ($jenis_pembayaran) {
                 $query->where('jenis_transaksi', $jenis_pembayaran);
             })
-            // ->orderByRaw("
-            //     COALESCE(
-            //         (
-            //             SELECT parent.no_transaksi
-            //             FROM transaksi AS parent
-            //             WHERE parent.id = transaksi.parent_id
-            //         ),
-            //         transaksi.no_transaksi
-            //     ) DESC
-            // ")
-            // ->orderByRaw("
-            //     CASE
-            //         WHEN transaksi.parent_id IS NULL THEN 0
-            //         ELSE 1
-            //     END ASC
-            // ")
             ->orderBy('created_at', 'DESC')
             ->get();
 
@@ -490,7 +474,7 @@ class MainController extends Controller
                 $post = Transaksi::create([
                     'parent_id' => $transaksi->id,
                     'no_invoice' => $pembayaran->no_invoice,
-                    'nim' => $pembayaran->penyewa->nim,
+                    'penyewa_id' => $pembayaran->penyewa_id,
                     'no_transaksi' => 'R' . $no_refund,
                     'tanggal_transaksi' => $tgl_refund,
                     'jumlah_uang' => -$jumlah_uang,

@@ -65,16 +65,6 @@
                         <label for="sampai_tanggal" class="form-label fw-bold">Sampai Tanggal Masuk</label>
                         <input type="date" name="sampai_tanggal" class="form-control" id="sampai_tanggal">
                     </div>
-                    {{-- penyewa --}}
-                    <div class="col-xl-2 mb-3">
-                        <label for="penyewa" class="form-label fw-bold">Penyewa</label>
-                        <select class="form-select form-select-2" name="penyewa" id="penyewa" style="width: 100%;">
-                            <option value="">Filter Penyewa</option>
-                            @foreach (\App\Models\Penyewa::all() as $row)
-                                <option value="{{ $row->id }}">{{ $row->namalengkap }}</option>
-                            @endforeach
-                        </select>
-                    </div>
                     {{-- jenis penyewa --}}
                     <div class="col-xl-2 mb-3">
                         <label for="jenis_penyewa" class="form-label fw-bold">Jenis Penyewa</label>
@@ -83,6 +73,16 @@
                             <option value="">Filter Jenis Penyewa</option>
                             <option value="mahasiswa">Mahasiswa</option>
                             <option value="non-mahasiswa">Non Mahasiswa</option>
+                        </select>
+                    </div>
+                    {{-- penyewa --}}
+                    <div class="col-xl-2 mb-3">
+                        <label for="penyewa_id" class="form-label fw-bold">Penyewa</label>
+                        <select class="form-select form-select-2" name="penyewa_id" id="penyewa_id" style="width: 100%;">
+                            <option value="">Filter Penyewa</option>
+                            @foreach (\App\Models\Penyewa::all() as $row)
+                                <option value="{{ $row->id }}">{{ $row->namalengkap }}</option>
+                            @endforeach
                         </select>
                     </div>
                     {{-- status pembayaran --}}
@@ -174,7 +174,7 @@
                     data: function(d) {
                         d.dari_tanggal = $("#dari_tanggal").val();
                         d.sampai_tanggal = $("#sampai_tanggal").val();
-                        d.penyewa = $("#penyewa").val();
+                        d.penyewa_id = $("#penyewa_id").val();
                         d.jenis_penyewa = $("#jenis_penyewa").val();
                         d.status_pembayaran = $("#status_pembayaran").val();
                     },
@@ -300,7 +300,7 @@
                 // },
             });
 
-            $("#dari_tanggal, #sampai_tanggal, #penyewa, #jenis_penyewa, #status_pembayaran").change(function() {
+            $("#dari_tanggal, #sampai_tanggal, #penyewa_id, #jenis_penyewa, #status_pembayaran").change(function() {
                 table.ajax.reload();
             });
         });
@@ -309,25 +309,8 @@
             table.ajax.reload()
         }
 
-        async function openModalPay(nim, no_invoice, total_tagihan) {
+        async function openModalPay(penyewa_id, no_invoice, total_tagihan) {
             $("#universalModalContent").addClass("modal-lg")
-            // // ambil data bank dari API
-            // let banks = [];
-            // try {
-            //     let res = await fetch('https://sia.ubtsu.ac.id/api/bank');
-            //     banks = await res.json();
-            // } catch (error) {
-            //     console.error('Gagal ambil data bank:', error);
-            // }
-
-            // const priorityId = 3;
-            // banks.sort((a, b) => {
-            //     if (a.id === priorityId) return -1;
-            //     if (b.id === priorityId) return 1;
-            //     return 0;
-            // });
-
-            // let bankOptions = '';
 
             // metode pembayaran
             const defaultBankId = 2;
@@ -382,7 +365,7 @@
             let depositOptions = `<option value="">Pilih Deposit</option>`;
             try {
                 const response = await $.ajax({
-                    url: `/deposit/get/${nim}`,
+                    url: `/deposit/get/${penyewa_id}`,
                     type: 'GET',
                     dataType: 'json',
                     headers: {
@@ -495,7 +478,7 @@
                                         ${depositOptions}
                                     </select>
 
-                                    <button type="button" class="btn btn-primary" onclick="btnGunakanDeposit(${nim},
+                                    <button type="button" class="btn btn-primary" onclick="btnGunakanDeposit(${penyewa_id},
                                     '${no_invoice}')">
                                         <i class="fa fa-check me-1"></i> Gunakan
                                     </button>
@@ -647,7 +630,7 @@
             });
         }
 
-        function btnGunakanDeposit(nim, no_invoice) {
+        function btnGunakanDeposit(penyewa_id, no_invoice) {
             if ($("#deposit").val()) {
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
@@ -677,7 +660,7 @@
 
                         const formData = new FormData();
                         formData.append('_token', '{{ csrf_token() }}');
-                        formData.append('nim', nim);
+                        formData.append('penyewa_id', penyewa_id);
                         formData.append('no_invoice', no_invoice);
                         formData.append('deposit_id', $("#deposit").val());
 

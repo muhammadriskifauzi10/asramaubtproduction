@@ -93,7 +93,7 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/deposit/datatabledeposit', [DepositMainController::class, 'datatabledeposit'])->name('deposit.datatabledeposit');
     Route::get('/deposit/tambah', [DepositMainController::class, 'tambah'])->name('deposit.tambah');
     Route::post('/deposit/post', [DepositMainController::class, 'create'])->name('deposit.post');
-    Route::get('/deposit/get/{nim}', [DepositMainController::class, 'getbynim'])->name('deposit.getbynim');
+    Route::get('/deposit/get/{penyewa_id}', [DepositMainController::class, 'getbypenyewa_id'])->name('deposit.getbypenyewa_id');
     Route::post('/deposit/use', [DepositMainController::class, 'use'])->name('deposit.use');
     Route::get('/deposit/kwitansi/{no_transaksi}', [DepositMainController::class, 'kwitansi'])->name('deposit.kwitansi');
     Route::post('/deposit/refund', [DepositMainController::class, 'refund'])->name('deposit.refund');

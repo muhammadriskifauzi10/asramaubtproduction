@@ -32,11 +32,11 @@
                     </div>
                     {{-- penyewa --}}
                     <div class="col-xl-2 mb-3">
-                        <label for="penyewa" class="form-label fw-bold">Penyewa</label>
-                        <select class="form-select form-select-2" name="penyewa" id="penyewa" style="width: 100%;">
+                        <label for="penyewa_id" class="form-label fw-bold">Penyewa</label>
+                        <select class="form-select form-select-2" name="penyewa_id" id="penyewa_id" style="width: 100%;">
                             <option value="">Filter Penyewa</option>
                             @foreach (\App\Models\Penyewa::all() as $row)
-                                <option value="{{ $row->nim }}">{{ $row->namalengkap }}</option>
+                                <option value="{{ $row->id }}">{{ $row->namalengkap }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -117,7 +117,7 @@
                         d.dari_tanggal = $("#dari_tanggal").val();
                         d.sampai_tanggal = $("#sampai_tanggal").val();
                         d.no_invoice = $("#no_invoice").val();
-                        d.nim = $("#penyewa").val();
+                        d.penyewa_id = $("#penyewa_id").val();
                         d.metode_pembayaran = $("#metode_pembayaran").val();
                         d.jenis_pembayaran = $("#jenis_pembayaran").val();
                     },
@@ -229,7 +229,7 @@
                 // },
             });
 
-            $("#dari_tanggal, #sampai_tanggal, #no_invoice, #penyewa, #metode_pembayaran, #jenis_pembayaran")
+            $("#dari_tanggal, #sampai_tanggal, #no_invoice, #penyewa_id, #metode_pembayaran, #jenis_pembayaran")
                 .change(
                     function() {
                         table.ajax.reload();

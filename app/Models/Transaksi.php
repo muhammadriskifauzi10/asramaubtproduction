@@ -13,9 +13,9 @@ class Transaksi extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'penyewa_id',
         'parent_id',
         'no_invoice',
-        'nim',
         'no_transaksi',
         'tanggal_transaksi',
         'jumlah_uang',
@@ -27,7 +27,7 @@ class Transaksi extends Model
 
     public function penyewa()
     {
-        return $this->hasOne(Penyewa::class, 'nim', 'nim');
+        return $this->hasOne(Penyewa::class, 'id', 'penyewa_id');
     }
 
     public function tagihan()

@@ -30,7 +30,7 @@ class MainController extends Controller
     {
         $dari_tanggal = request()->input('dari_tanggal');
         $sampai_tanggal = request()->input('sampai_tanggal');
-        $penyewa = request()->input('penyewa');
+        $penyewa_id = request()->input('penyewa_id');
         $jenis_penyewa = request()->input('jenis_penyewa');
         $status_pembayaran = request()->input('status_pembayaran');
 
@@ -38,8 +38,8 @@ class MainController extends Controller
             $query->whereDate('tanggal_masuk', '>=', $dari_tanggal)
                 ->whereDate('tanggal_masuk', '<=', $sampai_tanggal);
         })
-            ->when($penyewa, function ($query) use ($penyewa) {
-                $query->where('penyewa_id', $penyewa);
+            ->when($penyewa_id, function ($query) use ($penyewa_id) {
+                $query->where('penyewa_id', $penyewa_id);
             })
             ->when($jenis_penyewa, function ($query) use ($jenis_penyewa) {
                 $query->where('jenis_penyewa', $jenis_penyewa);
@@ -67,7 +67,7 @@ class MainController extends Controller
                 $status_pembayaran = 'Belum Lunas';
 
                 $btnbayar = '
-                    <button type="button" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Bayar Tagihan" style="width: 40px;" onclick="openModalPay(\'' . ($row->penyewa->nim ?? $row->penyewa->noktp) . '\', \'' . $row->no_invoice . '\', \'' . intval($hutang) . '\')">
+                    <button type="button" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Bayar Tagihan" style="width: 40px;" onclick="openModalPay(\'' . ($row->penyewa->id) . '\', \'' . $row->no_invoice . '\', \'' . intval($hutang) . '\')">
                         <i class="fa fa-credit-card"></i>
                     </button>
                 ';
@@ -218,7 +218,7 @@ class MainController extends Controller
 
                     Transaksi::create([
                         'no_invoice' => $no_invoice,
-                        'nim' => $pembayaran->penyewa->nim,
+                        'penyewa_id' => $pembayaran->penyewa_id,
                         'no_transaksi' => $no_transaksi,
                         'tanggal_transaksi' => $tgl_bayar,
                         'jumlah_uang' => $jumlah_uang,

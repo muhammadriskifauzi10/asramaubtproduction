@@ -13,7 +13,7 @@ class Deposit extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nim',
+        'penyewa_id',
         'no_transaksi',
         'tanggal_transaksi',
         'jumlah_uang',
@@ -48,7 +48,7 @@ class Deposit extends Model
 
     public function penyewa()
     {
-        return $this->hasOne(Penyewa::class, 'nim', 'nim');
+        return $this->hasOne(Penyewa::class, 'id', 'penyewa_id');
     }
 
     public function user()

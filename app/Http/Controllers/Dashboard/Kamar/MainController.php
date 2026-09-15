@@ -245,12 +245,20 @@ class MainController extends Controller
             if ($penyewa->count() > 0) {
                 $no = 1;
                 foreach ($penyewa as $row) {
+                    $jenis_kelamin = '';
+                    if ($row->penyewa->jenis_kelamin == "L") {
+                        $jenis_kelamin = "Laki-Laki";
+                    } else if ($row->penyewa->jenis_kelamin == "P") {
+                        $jenis_kelamin = "Perempuan";
+                    }
+
                     $tbody[] = '
                     <tr>
                         <td>' . $no++ . '</td>
+                        <td>' . $row->penyewa->jenis_penyewa . '</td>
                         <td>' . $row->penyewa->namalengkap . '</td>
                         <td>' . $row->penyewa->nim . '</td>
-                        <td>' . ($row->penyewa->jenis_kelamin == "L" ? "Laki-Laki" : "Perempuan") . '</td>
+                        <td>' . $jenis_kelamin . '</td>
                         <td>' . $row->penyewa->nama_bill_to . '</td>
                     </tr>
                     ';
@@ -258,7 +266,7 @@ class MainController extends Controller
             } else {
                 $tbody[] = '
                     <tr>
-                        <td class="text-center" colspan="5">Daftar Penyewa Tidak Ada</td>
+                        <td class="text-center" colspan="6">Daftar Penyewa Tidak Ada</td>
                     </tr>
                     ';
             }
@@ -275,6 +283,7 @@ class MainController extends Controller
                         <thead class="bg-dark text-light">
                             <tr>
                                 <th scope="col" width="50">NO</th>
+                                <th scope="col">JENIS PENYEWA</th>
                                 <th scope="col">NAMA PENYEWA</th>
                                 <th scope="col">NIM</th>
                                 <th scope="col">JENIS KELAMIN</th>
