@@ -53,8 +53,8 @@
                                         class="text-danger">*</sup></label>
                                 <div class="col-xl-10">
                                     <select name="harga_asrama"
-                                        class="form-control form-select-2 @error('harga_asrama') is-invalid @enderror"
-                                        id="harga_asrama" style="width: 100%">
+                                        class="form-control @error('harga_asrama') is-invalid @enderror"
+                                        id="harga_asrama" style="width: 100%" readonly>
                                         @foreach (\App\Models\Harga::where('tagih_id', 1)->get() as $row)
                                             <option value="{{ $row->id }}"
                                                 {{ old('harga_asrama') == $row->id ? 'selected' : '' }}>
@@ -106,64 +106,6 @@
                     $("#btn-submit").prop("disabled", true)
                 }, 1);
             })
-
-            new AutoNumeric('#jumlah_uang', {
-                digitGroupSeparator: '.',
-                decimalCharacter: ',',
-                decimalPlaces: 0,
-                unformatOnSubmit: true
-            });
-
-            bankList()
         })
-
-        async function bankList() {
-            let banks = [];
-
-            try {
-                const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
-                banks = await res.json();
-
-                // Hanya tampilkan bank id = 2
-                banks = banks.filter(bank => bank.id == 2);
-
-            } catch (error) {
-                console.error('Gagal ambil data bank:', error);
-
-                $("#bank-list").html(`
-                    <div class="alert alert-danger mb-0">
-                        Gagal memuat daftar bank.
-                    </div>
-                `);
-
-                return;
-            }
-
-            let bankOptions = "";
-
-            banks.forEach(bank => {
-                bankOptions += `
-                    <div class="form-check mb-2">
-                        <input
-                            class="form-check-input"
-                            type="radio"
-                            name="metode_pembayaran"
-                            id="metode_pembayaran_${bank.id}"
-                            value="${bank.name} - ${bank.account_name}"
-                            checked
-                            required
-                        >
-
-                        <label class="form-check-label" for="metode_pembayaran_${bank.id}">
-                            <strong>${bank.name}</strong> - ${bank.account_number}
-                            <br>
-                            <small class="text-muted">${bank.account_name}</small>
-                        </label>
-                    </div>
-                `;
-            });
-
-            $("#bank-list").html(bankOptions);
-        }
     </script>
 @endpush
