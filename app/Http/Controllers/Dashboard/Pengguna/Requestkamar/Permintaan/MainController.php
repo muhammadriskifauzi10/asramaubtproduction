@@ -10,6 +10,7 @@ use App\Models\Requesttransaksi;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MainController extends Controller
 {
@@ -198,5 +199,64 @@ class MainController extends Controller
         ];
 
         return view('contents.dashboard_mahasiswa.requestkamar.permintaan.detail', $data);
+    }
+    public function kwitansi($no_transaksi)
+    {
+        $no_transaksi = decrypt($no_transaksi);
+
+        if (!Requesttransaksi::where('no_transaksi', $no_transaksi)->exists()) {
+            abort(404);
+        }
+
+        $transaksi = Requesttransaksi::where('no_transaksi', $no_transaksi)->first();
+        $tagihan = Requestpembayaran::where('no_request', $transaksi->no_request)->first();
+        $data = [
+            'judul' => 'Cetak Kwitansi',
+            'tagihan' => $tagihan,
+            'transaksi' => $transaksi,
+            'terbilang' => $this->terbilang($tagihan->total_bayar)
+        ];
+
+        // Generate PDF
+        $pdf = Pdf::loadView('contents.dashboard_mahasiswa.requestkamar.permintaan.export.kwitansi', $data);
+        return $pdf->stream('cetakkwitansi-' . $tagihan->no_request . '.pdf');
+    }
+    private function terbilang($angka)
+    {
+        $angka = abs((int)$angka);
+        $bilangan = [
+            "",
+            "Satu",
+            "Dua",
+            "Tiga",
+            "Empat",
+            "Lima",
+            "Enam",
+            "Tujuh",
+            "Delapan",
+            "Sembilan",
+            "Sepuluh",
+            "Sebelas"
+        ];
+
+        if ($angka < 12) {
+            return $bilangan[$angka];
+        } elseif ($angka < 20) {
+            return $this->terbilang($angka - 10) . " Belas";
+        } elseif ($angka < 100) {
+            return $this->terbilang(intdiv($angka, 10)) . " Puluh " . $this->terbilang($angka % 10);
+        } elseif ($angka < 200) {
+            return "Seratus " . $this->terbilang($angka - 100);
+        } elseif ($angka < 1000) {
+            return $this->terbilang(intdiv($angka, 100)) . " Ratus " . $this->terbilang($angka % 100);
+        } elseif ($angka < 2000) {
+            return "Seribu " . $this->terbilang($angka - 1000);
+        } elseif ($angka < 1000000) {
+            return $this->terbilang(intdiv($angka, 1000)) . " Ribu " . $this->terbilang($angka % 1000);
+        } elseif ($angka < 1000000000) {
+            return $this->terbilang(intdiv($angka, 1000000)) . " Juta " . $this->terbilang($angka % 1000000);
+        }
+
+        return "Angka Terlalu Besar";
     }
 }

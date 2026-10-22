@@ -181,7 +181,6 @@
                                         <th scope="col">TANGGAL PEMBAYARAN</th>
                                         <th scope="col">JUMLAH UANG</th>
                                         <th scope="col">TANGGAL REFERENSI BAYAR</th>
-                                        <th scope="col">JENIS PEMBAYARAN</th>
                                         <th scope="col">METODE PEMBAYARAN</th>
                                         <th scope="col">FILE BUKTI</th>
                                         <th scope="col">OPERATOR</th>
@@ -195,7 +194,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center gap-1">
-                                                    <a href="{{ route('transaksi.kwitansi', encrypt($row->no_transaksi)) }}"
+                                                    <a href="{{ route('pengguna.permintaankamar.kwitansi', encrypt($row->no_transaksi)) }}"
                                                         class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
                                                         data-bs-toggle="tooltip" title="Cetak Kwitansi" style="width: 40px;"
                                                         target="_blank">
@@ -213,7 +212,6 @@
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($row->tanggal_transaksi)->format('Y-m-d H:i') }}
                                             </td>
-                                            <td>{{ $row->jenis_transaksi }}</td>
                                             <td>{{ $row->metode_pembayaran }}</td>
                                             <td>
                                                 @if ($row->file_bukti)
@@ -227,7 +225,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="9">Belum ada Transaksi pembayaran</td>
+                                            <td colspan="8">Belum ada Transaksi pembayaran</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

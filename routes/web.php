@@ -201,6 +201,7 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/pengguna/permintaankamar/datatablepermintaankamar', [PenggunapermintankamarMainController::class, 'datatablepermintaankamar'])->name('pengguna.permintaankamar.datatablepermintaankamar');
     Route::post('/pengguna/permintaankamar/bayar', [PenggunapermintankamarMainController::class, 'bayar'])->name('pengguna.permintaankamar.bayar');
     Route::get('/pengguna/permintaankamar/detail/{no_request}', [PenggunapermintankamarMainController::class, 'detail'])->name('pengguna.permintaankamar.detail');
+    Route::get('/pengguna/permintaankamar/kwitansi/{no_transaksi}', [PenggunapermintankamarMainController::class, 'kwitansi'])->name('pengguna.permintaankamar.kwitansi');
 
     // verifikasi permintaan kamar
     Route::get('/pengguna/verifikasipermintaankamar/{penyewa_id}', [PenggunaverifikasipermintaankamarMainController::class, 'index'])->name('pengguna.verifikasipermintaankamar');
