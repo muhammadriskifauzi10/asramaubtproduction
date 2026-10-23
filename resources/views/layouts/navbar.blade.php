@@ -237,6 +237,12 @@
                     <i class="fa-solid fa-user"></i>
                     <span>Penyewa</span>
                 </a>
+
+                <a href="{{ route('tarifpendaftaran') }}"
+                    class="list-group-item sidebar-link {{ request()->is('tarifpendaftaran*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Tarif Pendaftaran</span>
+                </a>
                 {{--
                 <a href="{{ route('tipecatering') }}"
                     class="list-group-item sidebar-link {{ request()->is('tipecatering*') ? 'active' : '' }}">

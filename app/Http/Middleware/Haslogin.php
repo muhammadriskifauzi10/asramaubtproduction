@@ -15,10 +15,10 @@ class Haslogin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(request()->session()->get('pengguna')) {
+        if (request()->session()->get('user')) {
             return $next($request);
         }
 
-        return redirect('/login');
+        return redirect('/');
     }
 }

@@ -15,12 +15,12 @@ class Notlogin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!request()->session()->get('pengguna')) {
+        if (!request()->session()->get('user')) {
             return $next($request);
         }
 
-        request()->session()->forget('pengguna');
+        request()->session()->forget('user');
 
-        return redirect()->route('penghuni.login');
+        return redirect()->route('login');
     }
 }

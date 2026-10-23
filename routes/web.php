@@ -12,6 +12,7 @@ use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Permintaan\MainControll
 use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Verifikasi\MainController as PenggunaverifikasipermintaankamarMainController;
 use App\Http\Controllers\Dashboard\Pengguna\Tagihan\MainController as PenggunaTagihanMainController;
 use App\Http\Controllers\Dashboard\Penyewa\MainController as PenyewaMainController;
+use App\Http\Controllers\Dashboard\Tarifpendaftaran\MainController as TarifpendaftaranMainController;
 use App\Http\Controllers\Dashboard\Perpanjang\MainController as PerpanjangMainController;
 use App\Http\Controllers\Dashboard\Piutang\MainController as PiutangMainController;
 use App\Http\Controllers\Dashboard\Requestkamar\Permintaan\MainController as RequestpermintaankamarMainController;
@@ -22,7 +23,6 @@ use App\Http\Controllers\Dashboard\Tagih\MainController as TagihMainController;
 use App\Http\Controllers\Dashboard\Tagihan\MainController as TagihanMainController;
 use App\Http\Controllers\Dashboard\Tipeasrama\MainController as TipeasramaMainController;
 use App\Http\Controllers\Dashboard\Tipecatering\MainController as TipecateringMainController;
-use App\Http\Controllers\ScanmakanController;
 use App\Models\Tipeasrama;
 use Illuminate\Support\Facades\Route;
 
@@ -53,10 +53,6 @@ Route::get('/getlantai', function () {
         );
     }
 })->name('getlantai');
-
-Route::get('/scanmakan', [ScanmakanController::class, 'index'])->name('scanmakan');
-Route::post('/scanmakan/datatablescanmakan', [ScanmakanController::class, 'datatablescanmakan'])->name('scanmakan.datatablescanmakan');
-Route::post('/scanmakan', [ScanmakanController::class, 'scan'])->name('scanmakan.scan');
 
 // GUEST
 Route::middleware(['check-access'])->group(function () {
@@ -165,6 +161,13 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/penyewa/singkron', [PenyewaMainController::class, 'singkron'])->name('penyewa.singkron');
     Route::post('/penyewa/hentikanasrama', [PenyewaMainController::class, 'hentikanasrama'])->name('penyewa.hentikanasrama');
     Route::post('/penyewa/hentikancatering', [PenyewaMainController::class, 'hentikancatering'])->name('penyewa.hentikancatering');
+
+    // tarif pendaftaran
+    Route::get('/tarifpendaftaran', [TarifpendaftaranMainController::class, 'index'])->name('tarifpendaftaran');
+    Route::post('/tarifpendaftaran/datatabletarifpendaftaran', [TarifpendaftaranMainController::class, 'datatabletarifpendaftaran'])->name('tarifpendaftaran.datatabletarifpendaftaran');
+    Route::get('/tarifpendaftaran/tambah', [TarifpendaftaranMainController::class, 'tambah'])->name('tarifpendaftaran.tambah');
+    Route::post('/tarifpendaftaran/post', [TarifpendaftaranMainController::class, 'create'])->name('tarifpendaftaran.post');
+    Route::post('/tarifpendaftaran/toggle', [TarifpendaftaranMainController::class, 'toggle'])->name('tarifpendaftaran.toggle');
 
     // tipe catering
     Route::get('/tipecatering', [TipecateringMainController::class, 'index'])->name('tipecatering');
