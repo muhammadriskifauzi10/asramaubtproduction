@@ -29,7 +29,7 @@ class LoginController extends Controller
             $request->session()->regenerateToken();
         }
 
-        $logoutLink = config('services.sidara.url').'/sso/logout?redirect_uri='.urlencode(url('/'));
+        $logoutLink = config('services.sidara.url') . '/sso/logout?redirect_uri=' . urlencode(url('/'));
 
         return redirect()->away($logoutLink);
     }
