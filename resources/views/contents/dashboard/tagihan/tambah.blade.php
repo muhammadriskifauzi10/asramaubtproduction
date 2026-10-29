@@ -167,7 +167,7 @@
                                                 {{ old('harga_asrama') == $row->id ? 'selected' : '' }}>
                                                 Tagihan: {{ $row->nama_tagihan }}
                                                 |
-                                                Harga: {{ number_format($row->harga, '2', '.', '.') }}
+                                                Biaya: {{ number_format($row->harga, '2', '.', '.') }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -190,6 +190,31 @@
                                     </div>
                                     @error('potongan_harga_asrama')
                                         <div class="invalid-feedback d-block">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                {{-- tagihan lainnya --}}
+                                <div class="col-xl-6 mb-3">
+                                    <label for="tagihan_lainnya" class="form-label fw-bold">Tagihan Lainnya <sup
+                                            class="text-danger">*</sup></label>
+                                    <select name="tagihan_lainnya[]"
+                                        class="form-control form-select-2 @error('tagihan_lainnya') is-invalid @enderror"
+                                        id="tagihan_lainnya" style="width: 100%" multiple>
+                                        @foreach (\App\Models\Harga::where('tagih_id', 2)->get() as $row)
+                                            <option value="{{ $row->id }}"
+                                                {{ old('tagihan_lainnya') == $row->id ? 'selected' : '' }}>
+                                                Tagihan: {{ $row->nama_tagihan }}
+                                                |
+                                                Biaya: {{ number_format($row->harga, '2', '.', '.') }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('tagihan_lainnya')
+                                        <div class="invalid-feedback">
                                             {{ $message }}
                                         </div>
                                     @enderror

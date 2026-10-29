@@ -105,6 +105,7 @@ class MainController extends Controller
             }
 
             $datapenyewa = $response->json();
+
             if (isset($datapenyewa['success']) && $datapenyewa['success'] === true) {
                 $penyewa = $datapenyewa['data'];
 

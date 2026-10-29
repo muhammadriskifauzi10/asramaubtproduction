@@ -57,6 +57,7 @@ Route::get('/getlantai', function () {
 // GUEST
 Route::middleware(['check-access'])->group(function () {
     Route::view('/', 'layouts.landing')->name('landing');
+    Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
 });
 
 // AUTH
@@ -109,7 +110,6 @@ Route::middleware(['sso'])->group(function () {
     Route::get('/transaksi', [TransaksiMainController::class, 'index'])->name('transaksi');
     Route::post('/transaksi/detail', [TransaksiMainController::class, 'detail'])->name('transaksi.detail');
     Route::post('/transaksi/datatabletransaksi', [TransaksiMainController::class, 'datatabletransaksi'])->name('transaksi.datatabletransaksi');
-    Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
     Route::get('/transaksi/refundkwitansi/{no_invoice}', [TransaksiMainController::class, 'refundkwitansi'])->name('transaksi.refundkwitansi');
     Route::post('/transaksi/refund', [TransaksiMainController::class, 'refund'])->name('transaksi.refund');
 

@@ -131,8 +131,10 @@
 
         {{-- HEADER --}}
         <div class="header">
-            <img src="{{ public_path('images/ubt-logo.webp') }}" alt="Logo UBT">
-            <h1>UNIVERSITAS BUNDA THAMRIN</h1>
+            @if ($tagihan->penyewa->nim)
+                <img src="{{ public_path('images/ubt-logo.webp') }}" alt="Logo UBT">
+                <h1>UNIVERSITAS BUNDA THAMRIN</h1>
+            @endif
             <h2>KWITANSI</h2>
         </div>
 
@@ -145,17 +147,19 @@
                 <td>: {{ $transaksi->no_transaksi }}</td>
             </tr>
             <tr>
-                <td>Nama Mahasiswa</td>
+                <td>Nama</td>
                 <td>: {{ $tagihan->penyewa->namalengkap }}</td>
             </tr>
-            <tr>
-                <td>NIM</td>
-                <td>: {{ $tagihan->penyewa->nim }}</td>
-            </tr>
-            <tr>
-                <td>Tahun Akademik</td>
-                <td>: {{ $tagihan->penyewa->angkatan }}</td>
-            </tr>
+            @if ($tagihan->penyewa->nim)
+                <tr>
+                    <td>NIM</td>
+                    <td>: {{ $tagihan->penyewa->nim }}</td>
+                </tr>
+                <tr>
+                    <td>Tahun Akademik</td>
+                    <td>: {{ $tagihan->penyewa->angkatan }}</td>
+                </tr>
+            @endif
             <tr>
                 <td>Periode</td>
                 <td>: {{ \Carbon\Carbon::parse($tagihan->tanggal_masuk)->format('d-m-Y') }} -
@@ -164,6 +168,10 @@
             <tr>
                 <td>Tanggal</td>
                 <td>: {{ \Carbon\Carbon::parse($transaksi->created_at)->format('d-m-Y') }}</td>
+            </tr>
+            <tr>
+                <td>Tanggal Referensi</td>
+                <td>: {{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
             </tr>
             <tr>
                 <td>Keterangan</td>
@@ -209,7 +217,10 @@
 
             {{-- Kanan: Operator / TTD --}}
             <div class="footer-right" style="text-align:center; width:200px;">
-                Dibuat oleh,<br><br><br><br><br><br><br>
+                <div>Dibuat oleh,</div>
+
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ route('deposit.kwitansi', $transaksi->no_transaksi) }}&size=90x90&format=png"
+                    alt="1" width="60" height="60" style="margin: 5px 5px;">
 
                 {{-- Garis tanda tangan --}}
                 <div class="ttd-line" style="border-top:1px solid #000; margin:5px 0;"></div>

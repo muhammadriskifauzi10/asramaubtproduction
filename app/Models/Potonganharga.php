@@ -19,6 +19,11 @@ class Potonganharga extends Model
         'operator_id'
     ];
 
+    public function pembayarandetail()
+    {
+        return $this->hasOne(Pembayarandetail::class, 'id', 'pembayaran_detail_id');
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'operator_id');

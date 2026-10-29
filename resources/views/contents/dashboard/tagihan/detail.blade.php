@@ -190,6 +190,7 @@
                             <table class="table m-0" style="width: 100%">
                                 <thead class="bg-dark text-light">
                                     <tr>
+                                        <th scope="col">NAMA POTONGAN HARGA</th>
                                         <th scope="col">POTONGAN HARGA</th>
                                         <th scope="col">TANGGAL DIBUAT</th>
                                         <th scope="col">OPERATOR</th>
@@ -201,6 +202,7 @@
                                     @endphp
                                     @forelse (\App\Models\Potonganharga::where('no_invoice', $tagihan->no_invoice)->get() as $row)
                                         <tr>
+                                            <td>{{ $row->pembayarandetail->jenissewa }}</td>
                                             <td>RP. {{ number_format($row->potongan_harga, 0, '.', '.') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d H:i') }}
                                             </td>
@@ -208,7 +210,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3">Belum ada Potongan Harga</td>
+                                            <td colspan="4">Belum ada Potongan Harga</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -311,23 +313,23 @@
                                         $no = 1;
                                     @endphp
                                     @forelse (\App\Models\Transaksi::where('no_invoice', $tagihan->no_invoice)
-                                                                                                                                                                                                                                                                 ->orderByRaw("
-                                                                                                                                                                                                                                                                        COALESCE(
-                                                                                                                                                                                                                                                                            (SELECT parent.no_transaksi
-                                                                                                                                                                                                                                                                                FROM transaksi AS parent
-                                                                                                                                                                                                                                                                                WHERE parent.id = transaksi.parent_id)
+                                                                                                                                                                                                                                                                                                                                     ->orderByRaw("
+                                                                                                                                                                                                                                                                                                                                            COALESCE(
+                                                                                                                                                                                                                                                                                                                                                (SELECT parent.no_transaksi
+                                                                                                                                                                                                                                                                                                                                                    FROM transaksi AS parent
+                                                                                                                                                                                                                                                                                                                                                    WHERE parent.id = transaksi.parent_id)
     ,
-                                                                                                                                                                                                                                                                            transaksi.no_transaksi
-                                                                                                                                                                                                                                                                        ) DESC
-                                                                                                                                                                                                                                                                    ")
-                                                                                                                                                                                                                                                                    ->orderByRaw("
-                                                                                                                                                                                                                                                                        CASE
-                                                                                                                                                                                                                                                                            WHEN transaksi.parent_id IS NULL THEN 0
-                                                                                                                                                                                                                                                                            ELSE 1
-                                                                                                                                                                                                                                                                        END ASC
-                                                                                                                                                                                                                                                                    ")
-                                                                                                                                                                                                                                                                    ->orderBy('created_at', 'DESC')
-                                                                                                                                                                                                                                                                    ->get() as $row)
+                                                                                                                                                                                                                                                                                                                                                transaksi.no_transaksi
+                                                                                                                                                                                                                                                                                                                                            ) DESC
+                                                                                                                                                                                                                                                                                                                                        ")
+                                                                                                                                                                                                                                                                                                                                        ->orderByRaw("
+                                                                                                                                                                                                                                                                                                                                            CASE
+                                                                                                                                                                                                                                                                                                                                                WHEN transaksi.parent_id IS NULL THEN 0
+                                                                                                                                                                                                                                                                                                                                                ELSE 1
+                                                                                                                                                                                                                                                                                                                                            END ASC
+                                                                                                                                                                                                                                                                                                                                        ")
+                                                                                                                                                                                                                                                                                                                                        ->orderBy('created_at', 'DESC')
+                                                                                                                                                                                                                                                                                                                                        ->get() as $row)
                                         @php
                                             $refund = \App\Models\Transaksi::where('parent_id', $row->id)->sum(
                                                 'jumlah_uang',
@@ -348,7 +350,7 @@
                                                     @endif
 
                                                     @if ($row->jenis_transaksi == 'Asrama')
-                                                        <a href="{{ route('transaksi.kwitansi', encrypt($row->no_transaksi)) }}"
+                                                        <a href="{{ route('transaksi.kwitansi', $row->no_transaksi) }}"
                                                             class="btn btn-success fw-bold d-flex align-items-center justify-content-center"
                                                             data-bs-toggle="tooltip" title="Cetak Kwitansi"
                                                             style="width: 40px;" target="_blank">
@@ -435,21 +437,23 @@
                                     <tr>
                                         <td>
                                             @if ($tagihan->status_pembayaran == 'pending' && $row->status == 1)
-                                                <div class="d-flex align-items-center justify-content-center gap-1">
-                                                    {{-- <button type="button"
-                                                        class="btn btn-danger fw-bold d-flex align-items-center justify-content-center"
-                                                        data-bs-toggle="tooltip" title="Batalkan" style="width: 40px;"
-                                                        onclick="cancelItem('{{ $row->no_invoice }}', {{ $row->id }}, '{{ $row->jenissewa }}')">
-                                                        <i class="fa fa-times"></i>
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-warning fw-bold d-flex align-items-center justify-content-center"
-                                                        data-bs-toggle="tooltip" title="Potongan Harga"
-                                                        style="width: 40px;"
-                                                        onclick="openModalPotonganHarga('{{ $row->no_invoice }}', {{ $row->id }}, '{{ $row->jenissewa }}')">
-                                                        <i class="fa fa-percent"></i>
-                                                    </button>
-                                                </div>
+                                                @if ($row->jumlah_pembayaran > $row->potongan_harga)
+                                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                                        {{-- <button type="button"
+                                                    class="btn btn-danger fw-bold d-flex align-items-center justify-content-center"
+                                                    data-bs-toggle="tooltip" title="Batalkan" style="width: 40px;"
+                                                    onclick="cancelItem('{{ $row->no_invoice }}', {{ $row->id }}, '{{ $row->jenissewa }}')">
+                                                    <i class="fa fa-times"></i>
+                                                </button> --}}
+                                                        <button type="button"
+                                                            class="btn btn-warning fw-bold d-flex align-items-center justify-content-center"
+                                                            data-bs-toggle="tooltip" title="Potongan Harga"
+                                                            style="width: 40px;"
+                                                            onclick="openModalPotonganHarga('{{ $row->no_invoice }}', {{ $row->id }}, '{{ $row->jenissewa }}')">
+                                                            <i class="fa fa-percent"></i>
+                                                        </button>
+                                                    </div>
+                                                @endif
                                             @endif
                                         </td>
                                         <td>{{ $row->jenissewa }}</td>
@@ -834,15 +838,13 @@
             $("#universalModalContent").addClass("modal-lg")
 
             // metode pembayaran
+            // metode pembayaran
             const defaultBankId = 2;
             let banks = [];
 
             try {
                 const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
                 banks = await res.json();
-
-                // Hanya tampilkan bank id = 2
-                banks = banks.filter(bank => bank.id == 2);
 
             } catch (error) {
                 console.error('Gagal ambil data bank:', error);
@@ -859,15 +861,6 @@
             let bankOptions = "";
             banks.forEach((bank) => {
                 bankOptions += `
-                    <div class="form-check mb-3">
-                        <input type="radio"
-                            name="metode_pembayaran"
-                            id="metode_pembayaran_0"
-                            value="Cash">
-                        <label class="form-check-label" for="metode_pembayaran_0">
-                            Cash
-                        </label>
-                    </div>
                     <div class="form-check">
                         <input type="radio"
                             name="metode_pembayaran"
@@ -980,6 +973,15 @@
                                     Metode Pembayaran <sup class="text-danger">*</sup>
                                 </label>
 
+                                <div class="form-check mb-3">
+                                    <input type="radio"
+                                        name="metode_pembayaran"
+                                        id="metode_pembayaran_0"
+                                        value="Cash">
+                                    <label class="form-check-label" for="metode_pembayaran_0">
+                                        Cash
+                                    </label>
+                                </div>
                                 <div id="bank-list">
                                     ${bankOptions}
                                 </div>

@@ -48,7 +48,7 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-xl-12">
-                        <table class="table m-0" id="datatablepenyewa" style="width: 100%">
+                        <table class="table m-0" id="datatablepenyewa" style="width: 100%;">
                             <thead class="bg-dark text-light">
                                 <tr>
                                     <th scope="col" width="50"></th>
@@ -176,7 +176,7 @@
                             <label for="api" class="fw-bold">Jenis API</label>
                             <select class="form-select" name="api" id="api" style="width: 100%">
                                 <option value="">Pilih Jenis API</option>
-                                @foreach (\App\Models\Linkapi::where('jenis', 'penyewa')->get() as $row)
+                                @foreach (\App\Models\Linkapi::where('jenis', 'penyewa')->where('status', 1)->get() as $row)
                                     <option value="{{ $row->id }}">
                                         Nama API: {{ $row->nama }} | kategori: {{ $row->kategori }}
                                     </option>

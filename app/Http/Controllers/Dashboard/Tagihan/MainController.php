@@ -61,7 +61,11 @@ class MainController extends Controller
                 $status_pembayaran = 'Lunas';
 
                 $btnbayar = '';
-                $btninvoice = '';
+                $btninvoice = '
+                    <a href="' . route('tagihan.invoice', encrypt($row->no_invoice)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
+                        <i class="fa fa-file-invoice"></i>
+                    </a>
+                ';
             } else if ($row->status_pembayaran == 'pending') {
                 // $status_pembayaran = '<strong class="text-warning">Belum Lunas</strong>';
                 $status_pembayaran = 'Belum Lunas';
@@ -81,7 +85,11 @@ class MainController extends Controller
                 $status_pembayaran = 'Gagal';
 
                 $btnbayar = '';
-                $btninvoice = '';
+                $btninvoice = '
+                    <a href="' . route('tagihan.invoice', encrypt($row->no_invoice)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
+                        <i class="fa fa-file-invoice"></i>
+                    </a>
+                ';
             }
 
 
@@ -404,6 +412,12 @@ class MainController extends Controller
         $harga_asrama = request()->input('harga_asrama');
         $potongan_harga_asrama = request()->input('potongan_harga_asrama');
 
+        $tagihanLainnya = request()->input('tagihan_lainnya', []);
+        $dataTagihanLainnya = Harga::whereIn('tagih_id', $tagihanLainnya)
+            ->get();
+        $totalTagihanLainnya = $dataTagihanLainnya->sum('harga');
+        // dd($dataTagihanLainnya, $totalTagihanLainnya);
+
         if (Penyewa::where('noktp', $no_ktp)->where('status_asrama', 1)->exists()) {
             DB::rollBack();
             return back()
@@ -507,7 +521,7 @@ class MainController extends Controller
                     ->with('messageFailed', 'Potongan harga asrama tidak valid!!');
             }
 
-            $total_tagihan = $total_tagihan_asrama;
+            $total_tagihan = $total_tagihan_asrama + $totalTagihanLainnya;
             $total_potongan_harga = $potongan_asrama;
             if ($total_potongan_harga >= $total_tagihan) {
                 $status = 'completed';
@@ -561,6 +575,17 @@ class MainController extends Controller
                     'jumlah_pembayaran' => $total_tagihan_asrama,
                     'potongan_harga' => $potongan_asrama,
                 ]);
+
+                // loop tagihan lainnya
+                foreach ($dataTagihanLainnya as $row) {
+                    Pembayarandetail::create([
+                        'no_invoice' => $no_invoice,
+                        'harga_id' => $row->id,
+                        'jenissewa' => $row->nama_tagihan,
+                        'harga' => $row->harga,
+                        'jumlah_pembayaran' => $row->harga,
+                    ]);
+                }
 
                 Penyewa::where('id', $data_penyewa->id)->update([
                     'status_asrama' => 1,

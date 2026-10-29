@@ -151,7 +151,7 @@ class MainController extends Controller
 
                         // detail
                         $total_tagihan = 0;
-                        foreach (Pembayarandetail::where('no_invoice', $master->no_invoice)->get() as $detail) {
+                        foreach (Pembayarandetail::where('no_invoice', $master->no_invoice)->where('jenissewa', 'asrama')->get() as $detail) {
                             $tagihan = $detail->harga * $jumlahbulan;
                             $total_tagihan += $tagihan;
 

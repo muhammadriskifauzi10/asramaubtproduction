@@ -506,8 +506,6 @@ class MainController extends Controller
     }
     public function kwitansi($no_transaksi)
     {
-        $no_transaksi = decrypt($no_transaksi);
-
         if (!Transaksi::where('no_transaksi', $no_transaksi)->exists()) {
             abort(404);
         }
