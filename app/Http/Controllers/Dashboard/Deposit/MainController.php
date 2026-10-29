@@ -60,7 +60,7 @@ class MainController extends Controller
             $aksi = '
             <div class="d-flex align-items-center justify-content-center gap-1">
                 ' . $btn1 . '
-                <a href="' . route('deposit.kwitansi', encrypt($row->no_transaksi)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Kwitansi Deposit" style="width: 40px;" target="_blank">
+                <a href="' . route('deposit.kwitansi', $row->no_transaksi) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Kwitansi Deposit" style="width: 40px;" target="_blank">
                     <i class="fa fa-receipt"></i>
                 </a>
             </div>
@@ -267,8 +267,6 @@ class MainController extends Controller
     }
     public function kwitansi($no_transaksi)
     {
-        $no_transaksi = decrypt($no_transaksi);
-
         if (!Transaksi::where('no_transaksi', $no_transaksi)->exists()) {
             abort(404);
         }

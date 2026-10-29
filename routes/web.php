@@ -65,6 +65,7 @@ Route::middleware(['check-access'])->group(function () {
 Route::middleware(['sso'])->group(function () {
     Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
     Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
+    Route::get('/deposit/kwitansi/{no_transaksi}', [DepositMainController::class, 'kwitansi'])->name('deposit.kwitansi');
 
     Route::get('/login-check', [LoginController::class, 'index'])->name('login-check');
 
@@ -95,7 +96,6 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/deposit/post', [DepositMainController::class, 'create'])->name('deposit.post');
     Route::get('/deposit/get/{penyewa_id}', [DepositMainController::class, 'getbypenyewa_id'])->name('deposit.getbypenyewa_id');
     Route::post('/deposit/use', [DepositMainController::class, 'use'])->name('deposit.use');
-    Route::get('/deposit/kwitansi/{no_transaksi}', [DepositMainController::class, 'kwitansi'])->name('deposit.kwitansi');
     Route::post('/deposit/refund', [DepositMainController::class, 'refund'])->name('deposit.refund');
     Route::post('/deposit/movesaldo', [DepositMainController::class, 'movesaldo'])->name('deposit.movesaldo');
 

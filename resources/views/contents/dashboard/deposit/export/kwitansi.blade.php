@@ -211,7 +211,10 @@
 
             {{-- Kanan: Operator / TTD --}}
             <div class="footer-right" style="text-align:center; width:200px;">
-                Dibuat oleh,<br><br><br><br><br><br><br>
+                <div>Dibuat oleh,</div>
+
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ route('deposit.kwitansi', $transaksi->no_transaksi) }}&size=90x90&format=png"
+                    alt="1" width="60" height="60" style="margin: 5px 5px;">
 
                 {{-- Garis tanda tangan --}}
                 <div class="ttd-line" style="border-top:1px solid #000; margin:5px 0;"></div>
