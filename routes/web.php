@@ -57,11 +57,15 @@ Route::get('/getlantai', function () {
 // GUEST
 Route::middleware(['check-access'])->group(function () {
     Route::view('/', 'layouts.landing')->name('landing');
+    Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
     Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
 });
 
 // AUTH
 Route::middleware(['sso'])->group(function () {
+    Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
+    Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
+
     Route::get('/login-check', [LoginController::class, 'index'])->name('login-check');
 
     Route::get('/dasbor', [MainController::class, 'index'])->name('dasbor');
@@ -78,7 +82,6 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/tagihan/tambah', [TagihanMainController::class, 'create'])->name('tagihan.posttagihan');
     // Route::get('/tagihan/tambah/catering', [TagihanMainController::class, 'tambahcatering'])->name('tagihan.tambah.catering');
     // Route::post('/tagihan/tambah/catering', [TagihanMainController::class, 'postcatering'])->name('tagihan.tambah.postcatering');
-    Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
 
     // perpanjang
     Route::get('/perpanjang', [PerpanjangMainController::class, 'index'])->name('perpanjang');

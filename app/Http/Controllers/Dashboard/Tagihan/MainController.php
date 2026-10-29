@@ -62,7 +62,7 @@ class MainController extends Controller
 
                 $btnbayar = '';
                 $btninvoice = '
-                    <a href="' . route('tagihan.invoice', encrypt($row->no_invoice)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
+                    <a href="' . route('tagihan.invoice', $row->no_invoice) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
                         <i class="fa fa-file-invoice"></i>
                     </a>
                 ';
@@ -76,7 +76,7 @@ class MainController extends Controller
                     </button>
                 ';
                 $btninvoice = '
-                    <a href="' . route('tagihan.invoice', encrypt($row->no_invoice)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
+                    <a href="' . route('tagihan.invoice', $row->no_invoice) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
                         <i class="fa fa-file-invoice"></i>
                     </a>
                 ';
@@ -86,7 +86,7 @@ class MainController extends Controller
 
                 $btnbayar = '';
                 $btninvoice = '
-                    <a href="' . route('tagihan.invoice', encrypt($row->no_invoice)) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
+                    <a href="' . route('tagihan.invoice', $row->no_invoice) . '" class="btn btn-success fw-bold d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Cetak Invoice" style="width: 40px;" target="_blank">
                         <i class="fa fa-file-invoice"></i>
                     </a>
                 ';
@@ -619,8 +619,6 @@ class MainController extends Controller
     // invoice
     public function invoice($no_invoice)
     {
-        $no_invoice = decrypt($no_invoice);
-
         if (!Pembayaran::where('no_invoice', $no_invoice)->exists()) {
             abort(404);
         }

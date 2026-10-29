@@ -240,10 +240,6 @@
             try {
                 const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
                 banks = await res.json();
-
-                // Hanya tampilkan bank id = 2
-                banks = banks.filter(bank => bank.id == 2);
-
             } catch (error) {
                 console.error('Gagal ambil data bank:', error);
 
@@ -259,15 +255,6 @@
             let bankOptions = "";
             banks.forEach((bank) => {
                 bankOptions += `
-                    <div class="form-check mb-3">
-                        <input type="radio"
-                            name="metode_pembayaran"
-                            id="metode_pembayaran_0"
-                            value="Cash">
-                        <label class="form-check-label" for="metode_pembayaran_0">
-                            Cash
-                        </label>
-                    </div>
                     <div class="form-check">
                         <input type="radio"
                             name="metode_pembayaran"
@@ -310,6 +297,15 @@
                             Metode Pembayaran <sup class="text-danger">*</sup>
                         </label>
 
+                        <div class="form-check mb-3">
+                            <input type="radio"
+                                name="metode_pembayaran"
+                                id="metode_pembayaran_0"
+                                value="Cash">
+                            <label class="form-check-label" for="metode_pembayaran_0">
+                                Cash
+                            </label>
+                        </div>
                         <div id="bank-list">
                             ${bankOptions}
                         </div>

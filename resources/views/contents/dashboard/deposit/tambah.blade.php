@@ -66,8 +66,8 @@
                                         class="text-danger">*</sup></label>
                                 <div class="col-xl-9">
                                     <select name="penyewa_id"
-                                        class="form-control form-select-2 @error('penyewa_id') is-invalid @enderror" id="penyewa_id"
-                                        style="width: 100%">
+                                        class="form-control form-select-2 @error('penyewa_id') is-invalid @enderror"
+                                        id="penyewa_id" style="width: 100%">
                                         <option value="">Pilih Penyewa</option>
                                         @foreach (\App\Models\Penyewa::all() as $row)
                                             <option value="{{ $row->id }}"
@@ -137,6 +137,14 @@
                                 <label for="metode_pembayaran" class="col-xl-3 col-form-label fw-bold">Metode Pembayaran
                                     <sup class="text-danger">*</sup></label>
                                 <div class="col-xl-9">
+                                    <div class="form-check mb-3">
+                                        <input type="radio" name="metode_pembayaran" id="metode_pembayaran_0"
+                                            class="@error('metode_pembayaran') is-invalid @enderror" value="Cash"
+                                            {{ old('metode_pembayaran') == 'Cash' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="metode_pembayaran_0">
+                                            Cash
+                                        </label>
+                                    </div>
                                     <div id="bank-list">
                                     </div>
                                 </div>
@@ -195,25 +203,11 @@
                 const res = await fetch('https://sia.ubtsu.ac.id/api/bank');
                 banks = await res.json();
 
-                // Hanya tampilkan bank id = 2
-                banks = banks.filter(bank => bank.id == 2);
-
                 let bankOptions = "";
                 banks.forEach((bank) => {
                     const bankValue = `${bank.name} - ${bank.account_name}`;
 
                     bankOptions += `
-                        <div class="form-check mb-3">
-                            <input type="radio"
-                                name="metode_pembayaran"
-                                id="metode_pembayaran_0"
-                                class="@error('metode_pembayaran') is-invalid @enderror"
-                                value="Cash"
-                                ${oldMetodePembayaran === 'Cash' ? 'checked' : ''}>
-                            <label class="form-check-label" for="metode_pembayaran_0">
-                                Cash
-                            </label>
-                        </div>
                         <div class="form-check">
                             <input type="radio"
                                 name="metode_pembayaran"

@@ -282,7 +282,7 @@ class MainController extends Controller
             'transaksi' => $transaksi,
             'deposit' => $deposit,
             'depositpembayaran' => $depositpembayaran,
-            'terbilang' => $this->terbilang($transaksi->total_bayar)
+            'terbilang' => $this->terbilang($deposit->saldo)
         ];
 
         // Generate PDF

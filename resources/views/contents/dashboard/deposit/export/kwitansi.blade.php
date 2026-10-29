@@ -173,9 +173,24 @@
 
         {{-- JUMLAH --}}
         <div class="amount-box">
-            Total Bayar
+            @php
+                $jumlah_refund = \App\Models\Transaksi::where('parent_id', $transaksi->id)->sum('jumlah_uang');
+            @endphp
+            Total Jumlah Deposit
             <div class="total">
                 Rp {{ number_format($transaksi->jumlah_uang, 0, ',', '.') }}
+            </div>
+            Total Jumlah Digunakan
+            <div class="total">
+                Rp {{ number_format($deposit->refundpembayaranPenggunaan->sum('jumlah_digunakan'), 0, ',', '.') }}
+            </div>
+            Total Refund
+            <div class="total">
+                Rp {{ number_format($jumlah_refund, 0, ',', '.') }}
+            </div>
+            Total Saldo
+            <div class="total">
+                Rp {{ number_format($deposit->saldo, 0, ',', '.') }}
             </div>
         </div>
 
