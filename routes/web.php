@@ -59,6 +59,7 @@ Route::middleware(['check-access'])->group(function () {
     Route::view('/', 'layouts.landing')->name('landing');
     Route::get('/tagihan/invoice/{no_invoice}', [TagihanMainController::class, 'invoice'])->name('tagihan.invoice');
     Route::get('/transaksi/kwitansi/{no_invoice}', [TransaksiMainController::class, 'kwitansi'])->name('transaksi.kwitansi');
+    Route::get('/deposit/kwitansi/{no_transaksi}', [DepositMainController::class, 'kwitansi'])->name('deposit.kwitansi');
 });
 
 // AUTH
