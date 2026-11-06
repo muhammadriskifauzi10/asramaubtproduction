@@ -100,7 +100,8 @@ class MainController extends Controller
         }
 
         return response()->json([
-            'data' => $output
+            'data' => $output,
+            'total_omset' => $data->sum('net_omset')
         ]);
     }
 }

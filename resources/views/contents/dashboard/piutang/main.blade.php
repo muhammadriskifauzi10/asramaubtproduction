@@ -149,18 +149,32 @@
                 // }
                 dom: "lBfrtip",
                 buttons: [{
-                    extend: "excel",
+                    extend: "excelHtml5",
                     text: "Export Excel",
                     filename: "piutang",
                     className: 'btn btn-success',
                     exportOptions: {
-                        // columns: ':not(:first-child)',
                         modifier: {
                             search: "none",
                         },
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Kolom yang berisi nominal rupiah
+                                var kolomRupiah = [5, 6, 7, 8, 9, 10, 11, 12, 13];
+
+                                if (kolomRupiah.includes(column)) {
+                                    // Hilangkan RP, titik, dan karakter selain angka
+                                    return parseInt(
+                                        data.toString().replace(/[^\d-]/g, '')
+                                    ) || 0;
+                                }
+
+                                return data;
+                            }
+                        }
                     },
                     title: `Piutang`
-                }, ],
+                }],
                 drawCallback: function() {
                     // var api = this.api();
 

@@ -45,6 +45,13 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-xl-12">
+                        <table class="mb-3">
+                            <tr>
+                                <th scope="col" class="text-left">TOTAL OMSET</th>
+                                <th scope="col" class="text-right">:</th>
+                                <th scope="col" class="text-left" id="total_omset"></th>
+                            </tr>
+                        </table>
                         <table class="table m-0" id="datatableomset" style="width: 100%">
                             <thead class="bg-dark text-light">
                                 <tr>
@@ -87,6 +94,18 @@
                         d.sampai_tanggal = $("#sampai_tanggal").val();
                         d.penyewa = $("#penyewa").val();
                     },
+                    dataSrc: function(json) {
+                        let total_omset = parseFloat(json.total_omset) || 0;
+
+                        $("#total_omset").text(
+                            "Rp. " + total_omset.toLocaleString("id-ID", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        );
+
+                        return json.data || [];
+                    }
                 },
                 columns: [{
                         data: "nomor",
@@ -137,18 +156,31 @@
                 // }
                 dom: "lBfrtip",
                 buttons: [{
-                    extend: "excel",
+                    extend: "excelHtml5",
                     text: "Export Excel",
                     filename: "omset",
                     className: 'btn btn-success',
                     exportOptions: {
-                        // columns: ':not(:first-child)',
                         modifier: {
                             search: "none",
                         },
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Kolom yang berisi nominal rupiah
+                                var kolomRupiah = [5, 6, 7, 8, 9, 10, 11];
+
+                                if (kolomRupiah.includes(column)) {
+                                    return parseInt(
+                                        data.toString().replace(/[^\d-]/g, '')
+                                    ) || 0;
+                                }
+
+                                return data;
+                            }
+                        }
                     },
                     title: `Omset`
-                }, ],
+                }],
                 drawCallback: function() {
                     // var api = this.api();
 
