@@ -8,21 +8,18 @@ use App\Http\Controllers\Dashboard\Kamar\MainController as KamarMainController;
 use App\Http\Controllers\Dashboard\Lantai\MainController as LantaiMainController;
 use App\Http\Controllers\Dashboard\Omset\MainController as OmsetMainController;
 use App\Http\Controllers\Dashboard\Pengguna\MainController as PenggunaMainController;
-use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Permintaan\MainController as PenggunapermintankamarMainController;
-use App\Http\Controllers\Dashboard\Pengguna\Requestkamar\Verifikasi\MainController as PenggunaverifikasipermintaankamarMainController;
 use App\Http\Controllers\Dashboard\Pengguna\Tagihan\MainController as PenggunaTagihanMainController;
 use App\Http\Controllers\Dashboard\Penyewa\MainController as PenyewaMainController;
 use App\Http\Controllers\Dashboard\Tarifpendaftaran\MainController as TarifpendaftaranMainController;
 use App\Http\Controllers\Dashboard\Perpanjang\MainController as PerpanjangMainController;
 use App\Http\Controllers\Dashboard\Piutang\MainController as PiutangMainController;
-use App\Http\Controllers\Dashboard\Requestkamar\Permintaan\MainController as RequestpermintaankamarMainController;
-use App\Http\Controllers\Dashboard\Requestkamar\Verifikasi\MainController as RequestverifikasipermintaankamarMainController;
 use App\Http\Controllers\Dashboard\Transaksi\MainController as TransaksiMainController;
 use App\Http\Controllers\Dashboard\Role\MainController as RoleMainController;
 use App\Http\Controllers\Dashboard\Tagih\MainController as TagihMainController;
 use App\Http\Controllers\Dashboard\Tagihan\MainController as TagihanMainController;
 use App\Http\Controllers\Dashboard\Tipeasrama\MainController as TipeasramaMainController;
 use App\Http\Controllers\Dashboard\Tipecatering\MainController as TipecateringMainController;
+use App\Http\Controllers\Dashboard\Booking\Pengajuankamar\MainController as PengajuankamarMainController;
 use App\Models\Tipeasrama;
 use Illuminate\Support\Facades\Route;
 
@@ -100,15 +97,10 @@ Route::middleware(['sso'])->group(function () {
     Route::post('/deposit/refund', [DepositMainController::class, 'refund'])->name('deposit.refund');
     Route::post('/deposit/movesaldo', [DepositMainController::class, 'movesaldo'])->name('deposit.movesaldo');
 
-
-    // request permintaan
-    Route::get('/permintaankamar', [RequestpermintaankamarMainController::class, 'index'])->name('request.permintaankamar');
-    Route::post('/permintaankamar/datatablepermintaankamar', [RequestpermintaankamarMainController::class, 'datatablepermintaankamar'])->name('request.permintaankamar.datatablepermintaankamar');
-    Route::get('/permintaankamar/tambah/{no_request}', [RequestpermintaankamarMainController::class, 'tambah'])->name('request.permintaankamar.tambah');
-
-    // verifikasi
-    Route::get('/verifikasipermintaankamar', [RequestverifikasipermintaankamarMainController::class, 'index'])->name('request.verifikasipermintaankamar');
-    Route::post('/verifikasipermintaankamar/datatableverifikasipermintaankamar', [RequestverifikasipermintaankamarMainController::class, 'datatableverifikasipermintaankamar'])->name('request.verifikasipermintaankamar.datatableverifikasipermintaankamar');
+    // booking
+    Route::get('/pengajuankamar', [PengajuankamarMainController::class, 'index'])->name('booking.pengajuankamar');
+    Route::post('/pengajuankamar/datatablepengajuankamar', [PengajuankamarMainController::class, 'datatablepengajuankamar'])->name('pengajuankamar.datatablepengajuankamar');
+    Route::get('/pengajuankamar/detail/{no_pengajuan}', [PengajuankamarMainController::class, 'detail'])->name('pengajuankamar.detail');
 
     // transaksi
     Route::get('/transaksi', [TransaksiMainController::class, 'index'])->name('transaksi');
@@ -202,15 +194,4 @@ Route::middleware(['sso'])->group(function () {
     // tagihan request
     Route::get('/pengguna/tagihan/tambah', [PenggunaTagihanMainController::class, 'index'])->name('pengguna.tagihan.tambah');
     Route::post('/pengguna/tagihan/tambah', [PenggunaTagihanMainController::class, 'create'])->name('pengguna.tagihan.posttagihan');
-
-    // request
-    Route::get('/pengguna/permintaankamar/{penyewa_id}', [PenggunapermintankamarMainController::class, 'index'])->name('pengguna.permintaankamar');
-    Route::post('/pengguna/permintaankamar/datatablepermintaankamar', [PenggunapermintankamarMainController::class, 'datatablepermintaankamar'])->name('pengguna.permintaankamar.datatablepermintaankamar');
-    Route::post('/pengguna/permintaankamar/bayar', [PenggunapermintankamarMainController::class, 'bayar'])->name('pengguna.permintaankamar.bayar');
-    Route::get('/pengguna/permintaankamar/detail/{no_request}', [PenggunapermintankamarMainController::class, 'detail'])->name('pengguna.permintaankamar.detail');
-    Route::get('/pengguna/permintaankamar/kwitansi/{no_transaksi}', [PenggunapermintankamarMainController::class, 'kwitansi'])->name('pengguna.permintaankamar.kwitansi');
-
-    // verifikasi permintaan kamar
-    Route::get('/pengguna/verifikasipermintaankamar/{penyewa_id}', [PenggunaverifikasipermintaankamarMainController::class, 'index'])->name('pengguna.verifikasipermintaankamar');
-    Route::post('/pengguna/verifikasipermintaankamar/datatableverifikasipermintaankamar', [PenggunaverifikasipermintaankamarMainController::class, 'datatableverifikasipermintaankamar'])->name('pengguna.verifikasipermintaankamar.datatableverifikasipermintaankamar');
 });

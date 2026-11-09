@@ -162,19 +162,13 @@
                     <span>Deposit</span>
                 </a>
 
-                {{-- <div class="sidebar-title">Request Kamar</div>
+                <div class="sidebar-title">Booking Kamar</div>
 
-                <a href="{{ route('request.permintaankamar') }}"
-                    class="list-group-item sidebar-link {{ request()->is('permintaankamar') ? 'active' : '' }}">
+                <a href="{{ route('booking.pengajuankamar') }}"
+                    class="list-group-item sidebar-link {{ request()->is('pengajuankamar') ? 'active' : '' }}">
                     <i class="fa-solid fa-bed"></i>
-                    <span>Permintaan</span>
+                    <span>Pengajuan Kamar</span>
                 </a>
-
-                <a href="{{ route('request.verifikasipermintaankamar') }}"
-                    class="list-group-item sidebar-link {{ request()->is('verifikasipermintaankamar') ? 'active' : '' }}">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>Verifikasi</span>
-                </a> --}}
 
                 <div class="sidebar-title">Laporan</div>
 
